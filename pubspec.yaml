@@ -41,6 +41,7 @@ dependencies:
   shimmer: ^2.0.0
   syncfusion_flutter_datepicker: ^19.2.60
   flash: ^2.0.1
+  provider: ^6.0.0
 
 
 dev_dependencies:

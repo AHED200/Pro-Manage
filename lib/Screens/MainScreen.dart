@@ -1,13 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:project_management/Helper/constant.dart';
-import 'package:project_management/Model/Project.dart';
 import 'package:project_management/Screens/AllProjects.dart';
 import 'package:project_management/Screens/AllPhases.dart';
 import 'package:project_management/Screens/Home.dart';
 import 'package:project_management/Screens/Profile.dart';
-import 'package:project_management/main.dart';
 
 enum _SelectedTab { home, allTasks, allProjects, profile }
 
@@ -17,7 +14,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  var _selectedTab = _SelectedTab.home;
+  Enum _selectedTab = _SelectedTab.home;
 
   @override
   Widget build(BuildContext context) {

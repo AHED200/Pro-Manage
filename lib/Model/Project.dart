@@ -11,9 +11,9 @@ class Project{
   List<Phase> _allPhases=[];
   List<Note> _notes=[];
 
-  Project(this._projectName, this._dueDate, this._theCost, this._isDone);
-  Project.formDocumentSnapshot(DocumentSnapshot data, String uid){
-    this._uid=uid;
+  Project(this._uid ,this._projectName, this._dueDate, this._theCost, this._isDone);
+  Project.formDocumentSnapshot(DocumentSnapshot data){
+    this._uid=data.get('projectId');
     this._projectName=data.get('projectName');
     this._isDone=data.get('isDone');
     this._theCost=data.get('theCost');
@@ -60,9 +60,10 @@ class Project{
 
   Map<String, dynamic> toMap(List<Phase> phases){
     Map<String, dynamic> map={
-      'projectName': this.projectName,
-      'dueDate':this.dueDate,
-      'theCost':this.theCost,
+      'projectId':this._uid,
+      'projectName': this._projectName,
+      'dueDate':this._dueDate,
+      'theCost':this._theCost,
       'isDone':false,
       'phases':[
         for(Phase phase in phases)

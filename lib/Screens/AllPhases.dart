@@ -1,10 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:project_management/Helper/Provider.dart';
 import 'package:project_management/Model/Project.dart';
 import 'package:project_management/Widget/AppBarContainer.dart';
 import 'package:project_management/Widget/PhaseState.dart';
-import 'package:project_management/main.dart';
+import 'package:provider/provider.dart';
 
 class AllPhases extends StatefulWidget {
   @override
@@ -13,10 +14,13 @@ class AllPhases extends StatefulWidget {
 
 class _AllTasksState extends State<AllPhases> {
   List<bool> isOpen=[];
+
+  List<Project> allProjects=[];
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-
+    MaterialProvider provider = Provider.of<MaterialProvider>(context);
+    allProjects=provider.allProjects;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,

@@ -115,7 +115,7 @@ class _SignInState extends State<SignIn> {
                             blurRadius: 5,
                             offset: Offset(0, 1))
                       ]),
-                  child: pageLoading?
+                  child: !pageLoading?
                   Text(
                     'Log in',
                     textAlign: TextAlign.center,

@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:project_management/Model/Project.dart';
 
 class UserModel{
   late String _uid;

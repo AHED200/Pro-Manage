@@ -1,11 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:project_management/Helper/GlobalMethod.dart';
+import 'package:project_management/Helper/Provider.dart';
 import 'package:project_management/Model/Phase.dart';
+import 'package:project_management/Model/Project.dart';
 import 'package:project_management/Screens/NewProject.dart';
 import 'package:project_management/Widget/AppBarContainer.dart';
-import 'package:project_management/Widget/SummaryContainer.dart';
 import 'package:project_management/main.dart';
+import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -13,9 +15,14 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    MaterialProvider provider = Provider.of<MaterialProvider>(context);
+    List<Project> allProjects=provider.allProjects;
+
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -43,7 +50,7 @@ class _HomeState extends State<Home> {
                 SizedBox(
                   height: 25,
                 ),
-                // SummaryContainer(project: project, size: size),
+                // SummaryContainer(project: , size: size),
                 SizedBox(
                   height: 40,
                 ),
@@ -107,13 +114,3 @@ class _HomeState extends State<Home> {
     );
   }
 }
-
-// appBar: AppBar(
-// leading: Icon(CupertinoIcons.settings),
-// actions: [
-// Padding(
-// padding: const EdgeInsets.only(right: 8.0),
-// child: Icon(CupertinoIcons.add),
-// )
-// ],
-// ),

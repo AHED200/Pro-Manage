@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animation_progress_bar/flutter_animation_progress_bar.dart';
-import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:project_management/Helper/GlobalMethod.dart';
+import 'package:project_management/Helper/Provider.dart';
 import 'package:project_management/Model/Project.dart';
 import 'package:project_management/Screens/ProjectDetail.dart';
 import 'package:project_management/Widget/AppBarContainer.dart';
-import '../main.dart';
+import 'package:provider/provider.dart';
 
 class AllProjects extends StatefulWidget {
   @override
@@ -13,9 +13,13 @@ class AllProjects extends StatefulWidget {
 }
 
 class _AllProjectsState extends State<AllProjects> {
+  List<Project> allProjects=[];
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    MaterialProvider provider = Provider.of<MaterialProvider>(context);
+    allProjects=provider.allProjects;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -146,23 +150,3 @@ class _AllProjectsState extends State<AllProjects> {
     );
   }
 }
-
-// SfCartesianChart(
-// title: ChartTitle(text: 'Summary', alignment: ChartAlignment.near),
-// primaryXAxis: CategoryAxis(
-// axisLine: AxisLine(color: Colors.transparent),
-// ),
-// series: <LineSeries<Phase, String>>[
-// LineSeries<Phase, String>(
-// isVisibleInLegend: false,
-// // Bind data source
-// dataSource:  <Phase>[
-// for(var phase in project.allPhases)
-// phase
-// ],
-// xValueMapper: (Phase phase, _) => phase.phaseName,
-// yValueMapper: (Phase phase, _) => 100,
-//
-// )
-// ]
-// ),

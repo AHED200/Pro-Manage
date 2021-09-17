@@ -1,6 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:project_management/Helper/Provider.dart';
+import 'package:project_management/Model/Project.dart';
 import 'package:project_management/main.dart';
+import 'package:provider/provider.dart';
 
 class Profile extends StatelessWidget {
   final TextStyle styleTitle=TextStyle(
@@ -19,9 +22,12 @@ class Profile extends StatelessWidget {
   final Color color=Color(0xFF2A2B30);
   final Color red=Color(0xFFF83B3B);
 
+  List<Project> allProjects=[];
+
   @override
   Widget build(BuildContext context) {
-
+    MaterialProvider provider = Provider.of<MaterialProvider>(context);
+    allProjects=provider.allProjects;
     return Scaffold(
       body: SingleChildScrollView(
         physics: BouncingScrollPhysics(),
