@@ -50,6 +50,8 @@ class _HomeState extends State<Home> {
                 SizedBox(
                   height: 25,
                 ),
+                allProjects.length==0?
+                    nonProjectMassage():
                 SummaryContainer(project: allProjects[0], size: size),
                 SizedBox(
                   height: 40,
@@ -109,6 +111,17 @@ class _HomeState extends State<Home> {
               ],
             )
           ],
+        ),
+      ),
+    );
+  }
+  Widget nonProjectMassage(){
+    return Center(
+      child: Text(
+        'There are no projects yet',
+        style: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.w600
         ),
       ),
     );
