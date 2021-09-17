@@ -21,10 +21,11 @@ void main() async {
     ),
   ], child: AppState()));
 }
-
+bool isLoading = true;
 class AppState extends StatelessWidget {
-  bool _isLoading = true;
+
   late List<Project> allProjects;
+
   @override
   Widget build(BuildContext context) {
     void setup() async {
@@ -36,11 +37,9 @@ class AppState extends StatelessWidget {
           .doc(uid)
           .get()
           .then((value) => {user = UserModel.fromSnapshot(value, uid)});
-      MaterialProvider provider = Provider.of<MaterialProvider>(context, listen: false);
+      MaterialProvider provider=Provider.of<MaterialProvider>(context, listen: false);
       provider.updateProjects();
-      _isLoading = false;
     }
-
     return FutureBuilder(
       future: Firebase.initializeApp(),
       builder: (c, snapshot) {
@@ -65,89 +64,21 @@ class AppState extends StatelessWidget {
               fontFamily: 'Nunito',
             ),
             home: StreamBuilder(
+              stream: FirebaseAuth.instance.authStateChanges(),
               initialData: FirebaseAuth.instance,
-              stream: FirebaseAuth.instance.userChanges(),
               builder: (
                 BuildContext context,
                 AsyncSnapshot<dynamic> snapshot,
               ) {
-                if (snapshot.data != null) {
+                if (snapshot.hasData) {
                   setup();
-
-                  return _isLoading
-                      ? Scaffold(
-                          body: Column(
-                            children: [
-                              SizedBox(
-                                height: 50,
-                              ),
-                              Expanded(
-                                child: Shimmer.fromColors(
-                                  enabled: true,
-                                  child: ListView.builder(
-                                    shrinkWrap: true,
-                                    itemBuilder: (_, __) => Padding(
-                                      padding:
-                                          const EdgeInsets.only(bottom: 8.0),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Container(
-                                            width: 48.0,
-                                            height: 48.0,
-                                            color: Colors.white,
-                                          ),
-                                          const Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 8.0),
-                                          ),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: <Widget>[
-                                                Container(
-                                                  width: double.infinity,
-                                                  height: 8.0,
-                                                  color: Colors.white,
-                                                ),
-                                                const Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      vertical: 2.0),
-                                                ),
-                                                Container(
-                                                  width: double.infinity,
-                                                  height: 8.0,
-                                                  color: Colors.white,
-                                                ),
-                                                const Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      vertical: 2.0),
-                                                ),
-                                                Container(
-                                                  width: 40.0,
-                                                  height: 8.0,
-                                                  color: Colors.white,
-                                                ),
-                                              ],
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    itemCount: 6,
-                                  ),
-                                  baseColor: Colors.grey.shade300,
-                                  highlightColor: Colors.grey.shade700,
-                                ),
-                              )
-                            ],
-                          ),
-                        )
+                  return isLoading
+                      ? waitingScreen()
                       : MainScreen();
-                } else
+                } else if(snapshot.data==null)
                   return SignUp();
+                else
+                  return waitingScreen();
               },
             ),
           );
@@ -155,6 +86,79 @@ class AppState extends StatelessWidget {
           return CircularProgressIndicator();
         }
       },
+    );
+  }
+
+  Scaffold waitingScreen(){
+    return Scaffold(
+      body: Column(
+        children: [
+          SizedBox(
+            height: 50,
+          ),
+          Expanded(
+            child: Shimmer.fromColors(
+              enabled: true,
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemBuilder: (_, __) => Padding(
+                  padding:
+                  const EdgeInsets.only(bottom: 8.0),
+                  child: Row(
+                    crossAxisAlignment:
+                    CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        width: 48.0,
+                        height: 48.0,
+                        color: Colors.white,
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 8.0),
+                      ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment:
+                          CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Container(
+                              width: double.infinity,
+                              height: 8.0,
+                              color: Colors.white,
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 2.0),
+                            ),
+                            Container(
+                              width: double.infinity,
+                              height: 8.0,
+                              color: Colors.white,
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 2.0),
+                            ),
+                            Container(
+                              width: 40.0,
+                              height: 8.0,
+                              color: Colors.white,
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                itemCount: 6,
+              ),
+              baseColor: Colors.grey.shade300,
+              highlightColor: Colors.grey.shade700,
+            ),
+          )
+        ],
+      ),
     );
   }
 }

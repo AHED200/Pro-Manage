@@ -6,6 +6,7 @@ import 'package:project_management/Model/Phase.dart';
 import 'package:project_management/Model/Project.dart';
 import 'package:project_management/Screens/NewProject.dart';
 import 'package:project_management/Widget/AppBarContainer.dart';
+import 'package:project_management/Widget/SummaryContainer.dart';
 import 'package:project_management/main.dart';
 import 'package:provider/provider.dart';
 
@@ -15,7 +16,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +50,7 @@ class _HomeState extends State<Home> {
                 SizedBox(
                   height: 25,
                 ),
-                // SummaryContainer(project: , size: size),
+                SummaryContainer(project: allProjects[0], size: size),
                 SizedBox(
                   height: 40,
                 ),

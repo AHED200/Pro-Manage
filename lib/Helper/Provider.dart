@@ -18,6 +18,7 @@ class MaterialProvider with ChangeNotifier {
           projects.add(Project.formDocumentSnapshot(value.docs[x]));
         }
         allProjects=projects;
+        isLoading=false;
       });
       notifyListeners();
     }

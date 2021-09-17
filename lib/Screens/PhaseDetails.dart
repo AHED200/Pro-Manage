@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:project_management/Helper/GlobalMethod.dart';
+import 'package:project_management/Helper/Provider.dart';
 import 'package:project_management/Helper/constant.dart';
 import 'package:project_management/Model/Phase.dart';
 import 'package:project_management/Model/Worker.dart';
 import 'package:project_management/Widget/ContainerButton.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PhaseDetail extends StatefulWidget {
@@ -24,6 +26,7 @@ class _PhaseDetailState extends State<PhaseDetail> {
       thickness: 2,
       height: 30,
     );
+    MaterialProvider provider=Provider.of<MaterialProvider>(context);
 
     final phase = widget.phase;
     return Scaffold(

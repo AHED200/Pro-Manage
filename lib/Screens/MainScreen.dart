@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:project_management/Helper/Provider.dart';
 import 'package:project_management/Helper/constant.dart';
 import 'package:project_management/Screens/AllProjects.dart';
 import 'package:project_management/Screens/AllPhases.dart';
