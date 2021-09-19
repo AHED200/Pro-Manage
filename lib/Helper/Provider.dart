@@ -6,7 +6,7 @@ import 'package:project_management/main.dart';
 class MaterialProvider with ChangeNotifier {
   List<Project> allProjects = [];
 
-  Future<void> updateProjects() async {
+  Future<void> getProjects() async {
     if (user!.allProjectsUid.isNotEmpty) {
       await FirebaseFirestore.instance
           .collection('project')
@@ -18,14 +18,25 @@ class MaterialProvider with ChangeNotifier {
           projects.add(Project.formDocumentSnapshot(value.docs[x]));
         }
         allProjects=projects;
-        isLoading=false;
       });
       notifyListeners();
     }
   }
 
-// FirebaseFirestore.instance
-//     .collection('project')
-//     .where('projectId', whereIn: user!.allProjectsUid)
-//     .snapshots(),
+  Future<void> updateProject(Project project)async{
+    await FirebaseFirestore.instance
+        .collection('project').doc(project.uid).update(project.toMap(project.allPhases));
+
+    notifyListeners();
+  }
+
+  Future<void> deleteProject(Project project)async{
+    await FirebaseFirestore.instance
+        .collection('project').doc(project.uid).delete();
+    await FirebaseFirestore.instance.collection('users').doc(user!.uid).update({
+      'allProjects':FieldValue.arrayRemove([project.uid])
+    });
+    allProjects.removeWhere((element) => element==project);
+    notifyListeners();
+  }
 }

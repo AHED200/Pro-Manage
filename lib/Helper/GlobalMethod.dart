@@ -70,4 +70,3 @@ String? getPhaseState(Phase phase){
   }else
     return 'finish';
 }
-

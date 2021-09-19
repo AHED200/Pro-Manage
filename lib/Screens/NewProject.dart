@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cool_alert/cool_alert.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -34,44 +35,59 @@ class _NewProjectState extends State<NewProject> {
         isLoading = true;
       });
 
-      FirebaseFirestore firestore = FirebaseFirestore.instance;
+      try {
+        FirebaseFirestore firestore = FirebaseFirestore.instance;
+        //Collect all phases
+        List<Phase> phases = [];
+        for (PhaseField phaseF in phaseFields) {
+          if (phaseF.phaseName!.isNotEmpty) {
+            Phase phase = Phase(phaseF.phaseName.toString(), '',
+                phaseF.startDate, phaseF.dueDate, false);
+            phases.add(phase);
+          } else {
+            throw Exception();
+          }
+        }
 
-      //Collect all phases
-      List<Phase> phases = [];
-      for (PhaseField phaseF in phaseFields) {
-        Phase phase = Phase(phaseF.phaseName.toString(), '', phaseF.startDate,
-            phaseF.dueDate, false);
-        phases.add(phase);
+        //Setup project
+        final String projectUid = Uuid().v4();
+        dueDate = dueDate == null
+            ? format.format(DateTime.now()).toString()
+            : dueDate.toString();
+        Project project = Project(projectUid, projectNameController.text,
+            dueDate.toString(), costController.text, false);
+        String userId = FirebaseAuth.instance.currentUser!.uid;
+
+        //Add project UID in user projects list
+        await firestore.collection('users').doc(userId).update({
+          'allProjects': FieldValue.arrayUnion([projectUid])
+        });
+        user!.allProjectsUid.add(projectUid);
+
+        //Create new project in Firestore
+        await firestore
+            .collection('project')
+            .doc(projectUid)
+            .set(project.toMap(phases));
+
+        //Update application
+        await provider.getProjects();
+
+        setState(() {
+          isLoading = false;
+        });
+        Navigator.of(context).pop();
+      } catch (e) {
+        setState(() {
+          isLoading = false;
+        });
+        CoolAlert.show(
+          context: context,
+          type: CoolAlertType.error,
+          text: 'You forget some fields are empty.',
+          title: 'Failed!',
+        );
       }
-
-      //Setup project
-      final String projectUid = Uuid().v4();
-      dueDate = dueDate == null
-          ? format.format(DateTime.now()).toString()
-          : dueDate.toString();
-      Project project = Project(projectUid, projectNameController.text,
-          dueDate.toString(), costController.text, false);
-      String userId = FirebaseAuth.instance.currentUser!.uid;
-
-      //Add project UID in user projects list
-      await firestore.collection('users').doc(userId).update({
-        'allProjects': FieldValue.arrayUnion([projectUid])
-      });
-      user!.allProjectsUid.add(projectUid);
-
-      //Create new project in Firestore
-      await firestore
-          .collection('project')
-          .doc(projectUid)
-          .set(project.toMap(phases));
-
-      //Update application
-      provider.updateProjects();
-
-      setState(() {
-        isLoading = false;
-      });
-      Navigator.of(context).pop();
     }
 
     Size size = MediaQuery.of(context).size;
@@ -86,134 +102,132 @@ class _NewProjectState extends State<NewProject> {
       body: Stack(children: [
         SingleChildScrollView(
             physics: BouncingScrollPhysics(),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Text(
-                    'Project name',
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
-                  ),
-                  TextField(
-                    textInputAction: TextInputAction.next,
-                    controller: projectNameController,
-                    keyboardType: TextInputType.name,
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    'The cost',
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
-                  ),
-                  TextField(
-                    textInputAction: TextInputAction.go,
-                    controller: costController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.attach_money_outlined)),
-                  ),
-                  SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Due date',
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 15,
+                ),
+                Text(
+                  'Project name',
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+                ),
+                TextField(
+                  textInputAction: TextInputAction.next,
+                  controller: projectNameController,
+                  keyboardType: TextInputType.name,
+                ),
+                SizedBox(height: 10),
+                Text(
+                  'The cost',
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+                ),
+                TextField(
+                  textInputAction: TextInputAction.go,
+                  controller: costController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.attach_money_outlined)),
+                ),
+                SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Due date',
+                      style:
+                          TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+                    ),
+                    TextButton(
+                      child: Text(
+                        dueDate == null
+                            ? format.format(DateTime.now())
+                            : dueDate.toString(),
                         style: TextStyle(
-                            fontSize: 22, fontWeight: FontWeight.w600),
-                      ),
-                      TextButton(
-                        child: Text(
-                          dueDate == null
-                              ? format.format(DateTime.now())
-                              : dueDate.toString(),
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            decoration: TextDecoration.underline,
-                          ),
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          decoration: TextDecoration.underline,
                         ),
-                        onPressed: () {
-                          showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  backgroundColor:
-                                      Theme.of(context).scaffoldBackgroundColor,
-                                  content: SizedBox(
-                                    height: 250,
-                                    width: 250,
-                                    child: SfDateRangePicker(
-                                      enablePastDates: false,
-                                      confirmText: 'Ok',
-                                      showActionButtons: true,
-                                      onCancel: () {
-                                        Navigator.pop(context);
-                                      },
-                                      onSubmit: (data) {
-                                        setState(() {
-                                          dueDate = format.format(
-                                              DateTime.parse(data.toString()));
-                                        });
-                                        Navigator.pop(context);
-                                      },
-                                    ),
+                      ),
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                backgroundColor:
+                                    Theme.of(context).scaffoldBackgroundColor,
+                                content: SizedBox(
+                                  height: 250,
+                                  width: 250,
+                                  child: SfDateRangePicker(
+                                    enablePastDates: false,
+                                    confirmText: 'Ok',
+                                    showActionButtons: true,
+                                    onCancel: () {
+                                      Navigator.pop(context);
+                                    },
+                                    onSubmit: (data) {
+                                      setState(() {
+                                        dueDate = format.format(
+                                            DateTime.parse(data.toString()));
+                                      });
+                                      Navigator.pop(context);
+                                    },
                                   ),
-                                );
-                              });
-                        },
-                      )
+                                ),
+                              );
+                            });
+                      },
+                    )
+                  ],
+                ),
+                Divider(
+                  endIndent: 20,
+                  indent: 20,
+                  height: 20,
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Color(0x98012A44),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  width: size.width,
+                  padding: EdgeInsets.all(8),
+                  margin: EdgeInsets.only(bottom: 70),
+                  child: Wrap(
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            'Project phases',
+                            style: TextStyle(
+                                fontSize: 17, fontWeight: FontWeight.w600),
+                          ),
+                          IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  phaseFields.add(PhaseField());
+                                });
+                              },
+                              icon: Icon(Icons.add))
+                        ],
+                      ),
+                      for (int x = 0; x < phaseFields.length; x++)
+                        Wrap(children: [
+                          Text(
+                            '#${x + 1}',
+                            style: TextStyle(
+                                fontSize: 15, fontWeight: FontWeight.w700),
+                          ),
+                          phaseFields[x],
+                          if (x >= 0 && x <= phaseFields.length - 2) Divider()
+                        ])
                     ],
                   ),
-                  Divider(
-                    endIndent: 20,
-                    indent: 20,
-                    height: 20,
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Color(0x98012A44),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    width: size.width,
-                    padding: EdgeInsets.all(8),
-                    margin: EdgeInsets.only(bottom: 70),
-                    child: Wrap(
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              'Project phases',
-                              style: TextStyle(
-                                  fontSize: 17, fontWeight: FontWeight.w600),
-                            ),
-                            IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    phaseFields.add(PhaseField());
-                                  });
-                                },
-                                icon: Icon(Icons.add))
-                          ],
-                        ),
-                        for (int x = 0; x < phaseFields.length; x++)
-                          Wrap(children: [
-                            Text(
-                              '#${x + 1}',
-                              style: TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.w700),
-                            ),
-                            phaseFields[x],
-                            if (x >= 0 && x <= phaseFields.length - 2) Divider()
-                          ])
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             )),
         GestureDetector(
           onTap: () {

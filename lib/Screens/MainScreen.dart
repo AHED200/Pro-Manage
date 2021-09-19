@@ -1,11 +1,17 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:project_management/Helper/Provider.dart';
 import 'package:project_management/Helper/constant.dart';
+import 'package:project_management/Model/UserModel.dart';
 import 'package:project_management/Screens/AllProjects.dart';
 import 'package:project_management/Screens/AllPhases.dart';
 import 'package:project_management/Screens/Home.dart';
 import 'package:project_management/Screens/Profile.dart';
+import 'package:provider/provider.dart';
+
+import '../main.dart';
 
 enum _SelectedTab { home, allTasks, allProjects, profile }
 
@@ -16,11 +22,42 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   Enum _selectedTab = _SelectedTab.home;
+  bool isLoading=true;
 
+  void setup() async {
+    final auth = FirebaseAuth.instance;
+    final String uid = auth.currentUser!.uid;
+    final fireStore = FirebaseFirestore.instance;
+    await fireStore
+        .collection('users')
+        .doc(uid)
+        .get()
+        .then((value) => {user = UserModel.fromSnapshot(value, uid)});
+
+    MaterialProvider provider = Provider.of<MaterialProvider>(context, listen: false);
+    await provider.getProjects();
+    setState(() {
+      isLoading=false;
+    });
+  }
+
+  @override
+  void initState(){
+    setup();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    setup();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     PageController _pageController = PageController(initialPage: 0);
-    return Scaffold(
+    return isLoading?
+    AppState.waitingScreen():
+    Scaffold(
       body: PageView(
         controller: _pageController,
         physics: BouncingScrollPhysics(),

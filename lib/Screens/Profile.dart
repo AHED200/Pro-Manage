@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:project_management/Helper/Provider.dart';
 import 'package:project_management/Model/Project.dart';
+import 'package:project_management/Screens/AuthScreens/SignIn.dart';
 import 'package:project_management/main.dart';
 import 'package:provider/provider.dart';
 
@@ -193,6 +194,7 @@ class Profile extends StatelessWidget {
             GestureDetector(
               onTap: (){
                 FirebaseAuth.instance.signOut();
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder)=>SignIn()));
               },
               child: Container(
                 margin: EdgeInsets.symmetric(horizontal: 15, vertical: 50),

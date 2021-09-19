@@ -11,6 +11,12 @@ class Project{
   List<Phase> _allPhases=[];
   List<Note> _notes=[];
 
+  String get uid => _uid;
+
+  set uid(String value) {
+    _uid = value;
+  }
+
   Project(this._uid ,this._projectName, this._dueDate, this._theCost, this._isDone);
   Project.formDocumentSnapshot(DocumentSnapshot data){
     this._uid=data.get('projectId');

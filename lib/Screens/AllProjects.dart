@@ -77,22 +77,13 @@ class _AllProjectsState extends State<AllProjects> {
                 end: Alignment.bottomCenter)),
         child: Column(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  project.dueDate,
-                  style: TextStyle(fontSize: 19, fontWeight: FontWeight.w300),
-                ),
-                IconButton(
-                  onPressed: () {},
-                  icon: Icon(
-                    Icons.more_vert_outlined,
-                    size: 30,
-                  ),
-                  enableFeedback: false,
-                )
-              ],
+            Align(
+              alignment: Alignment.topLeft,
+              child: Text(
+                project.dueDate,
+                style: TextStyle(fontSize: 19, fontWeight: FontWeight.w300),
+              ),
+              heightFactor: 2,
             ),
             Text(
               project.projectName,

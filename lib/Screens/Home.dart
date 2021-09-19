@@ -115,7 +115,7 @@ class _HomeState extends State<Home> {
       ),
     );
   }
-  Widget nonProjectMassage(){
+  Center nonProjectMassage(){
     return Center(
       child: Text(
         'There are no projects yet',

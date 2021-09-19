@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:project_management/Helper/Provider.dart';
 import 'package:project_management/Helper/constant.dart';
 import 'package:project_management/Model/UserModel.dart';
 import 'package:project_management/Screens/AuthScreens/SignUp.dart';
 import 'package:project_management/main.dart';
+import 'package:provider/provider.dart';
 
 import '../MainScreen.dart';
 
@@ -181,7 +183,8 @@ class _SignInState extends State<SignIn> {
             .doc(uid)
             .get()
             .then((value) => {user = UserModel.fromSnapshot(value, uid)});
-
+        MaterialProvider provider=Provider.of<MaterialProvider>(context, listen: false);
+        provider.getProjects();
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => MainScreen()));
       }

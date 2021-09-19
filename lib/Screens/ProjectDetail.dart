@@ -1,16 +1,22 @@
 import 'dart:ui';
+import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:intl/intl.dart';
 import 'package:project_management/Helper/GlobalMethod.dart';
+import 'package:project_management/Helper/Provider.dart';
 import 'package:project_management/Helper/constant.dart';
 import 'package:project_management/Model/Note.dart';
 import 'package:project_management/Model/Phase.dart';
 import 'package:project_management/Model/Project.dart';
+import 'package:project_management/Screens/MainScreen.dart';
 import 'package:project_management/Screens/PhaseDetails.dart';
 import 'package:project_management/Widget/AppBarContainer.dart';
 import 'package:project_management/Widget/ContainerButton.dart';
+import 'package:provider/provider.dart';
 import 'package:random_color/random_color.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class ProjectDetail extends StatefulWidget {
   final Project project;
@@ -22,29 +28,196 @@ class ProjectDetail extends StatefulWidget {
 }
 
 class _ProjectDetailState extends State<ProjectDetail> {
+
+  DateFormat format = DateFormat('yyyy-MM-dd');
+  String? newDueDate;
+  bool edit=false;
+  late TextEditingController projectNameController =
+  TextEditingController(text: widget.project.projectName);
+  late TextEditingController costController =
+  TextEditingController(text: widget.project.theCost);
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     Project project = widget.project;
+    MaterialProvider provider=Provider.of<MaterialProvider>(context);
+
 
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           leading: IconButton(
-            icon: Icon(CupertinoIcons.back),
+            icon:  Icon(CupertinoIcons.back),
             onPressed: () {
               Navigator.pop(context);
             },
           ),
           actions: [
-            IconButton(
+          !edit?IconButton(
               icon: Icon(Icons.edit),
-              onPressed: () {},
-            ),
-          ],
+              onPressed: () {
+                setState(() {
+                  edit=!edit;
+                });
+              },
+            ):
+          IconButton(
+            icon: Icon(Icons.delete, color: Colors.redAccent,),
+            onPressed: () {
+              CoolAlert.show(
+                context: context,
+                type: CoolAlertType.warning,
+                text: "Are you sure for delete project.",
+                title: 'Warning!',
+                confirmBtnText: 'Delete',
+                confirmBtnColor: Colors.redAccent,
+                onConfirmBtnTap: ()async{
+                  await provider.deleteProject(project);
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder)=> MainScreen()));
+                },
+                cancelBtnText: 'Cancel',
+                showCancelBtn: true,
+                onCancelBtnTap: ()=>Navigator.pop(context),
+              );
+            },
+          ),
+          ]
         ),
+        resizeToAvoidBottomInset: false,
         body: Column(
           children: [
+            edit?
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                children: [
+                  TextField(
+                    decoration: InputDecoration(labelText: 'Project name'),
+                    controller: projectNameController,
+                  ),
+                  SizedBox(height: 15),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                                  content: SizedBox(
+                                    height: 250,
+                                    width: 250,
+                                    child: SfDateRangePicker(
+                                      enablePastDates: false,
+                                      confirmText: 'Ok',
+                                      showActionButtons: true,
+                                      onCancel: () {
+                                        Navigator.pop(context);
+                                      },
+                                      onSubmit: (data) {
+                                        setState(() {
+                                          newDueDate = format.format(
+                                              DateTime.parse(data.toString()));
+                                        });
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                  ),
+                                );
+                              });
+                        },
+                        child: Container(
+                            padding:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                            decoration: BoxDecoration(
+                              color: Color(0x25633BE5),
+                              borderRadius: BorderRadius.circular(13),
+                            ),
+                            child: RichText(
+                              text: TextSpan(children: [
+                                TextSpan(
+                                  text: 'Due date\n',
+                                  style: TextStyle(
+                                      fontSize: 15, fontWeight: FontWeight.w500),
+                                ),
+                                TextSpan(
+                                  text: newDueDate==null?project.dueDate:newDueDate,
+                                  style: TextStyle(
+                                      fontSize: 15, fontWeight: FontWeight.w600),
+                                ),
+                              ]),
+                            )),
+                      ),
+                      SizedBox(
+                        width: 150,
+                        child: TextField(
+                          controller: costController,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            labelText: 'The cost',
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  GestureDetector(
+                    onTap: (){
+                      project.projectName=projectNameController.text;
+                      project.theCost=costController.text;
+                      if(newDueDate!=null)project.dueDate=newDueDate!;
+                      provider.updateProject(project);
+                      setState(() {
+                        edit=false;
+                      });
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                      margin: EdgeInsets.only(left: 30, right: 30, top: 12, bottom: 3),
+                      decoration: BoxDecoration(
+                        color: Color(0x96633BE5),
+                        borderRadius: BorderRadius.circular(9),
+                      ),
+                      child: Text(
+                        'Save',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: (){
+                      setState(() {
+                        edit=false;
+                      });
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                      margin: EdgeInsets.only(left: 30, right: 30, top: 8, bottom: 12),
+                      decoration: BoxDecoration(
+                        color: Color(0x96828282),
+                        borderRadius: BorderRadius.circular(9),
+                      ),
+                      child: Text(
+                        'Cancel',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ):
             AppBarContainer(
               height: 120,
               width: size.width,
