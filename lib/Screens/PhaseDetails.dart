@@ -1,12 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:project_management/Helper/GlobalMethod.dart';
-import 'package:project_management/Helper/Provider.dart';
 import 'package:project_management/Helper/constant.dart';
 import 'package:project_management/Model/Phase.dart';
 import 'package:project_management/Model/Worker.dart';
-import 'package:project_management/Widget/ContainerButton.dart';
-import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PhaseDetail extends StatefulWidget {
@@ -26,7 +23,6 @@ class _PhaseDetailState extends State<PhaseDetail> {
       thickness: 2,
       height: 30,
     );
-    MaterialProvider provider=Provider.of<MaterialProvider>(context);
 
     final phase = widget.phase;
     return Scaffold(
@@ -92,7 +88,7 @@ class _PhaseDetailState extends State<PhaseDetail> {
                         style: TextStyle(
                             fontSize: 24, fontWeight: FontWeight.w600),
                       ),
-                      ContainerButton(icon: Icons.add),
+                      containerButton(Icons.add, (){}),
                     ],
                   ),
                   SizedBox(height: 10),
@@ -149,7 +145,7 @@ class _PhaseDetailState extends State<PhaseDetail> {
                         style: TextStyle(
                             fontSize: 24, fontWeight: FontWeight.w600),
                       ),
-                      ContainerButton(icon: Icons.add),
+                      containerButton(Icons.add, (){}),
                     ],
                   ),
                   ListView.builder(
@@ -272,5 +268,26 @@ class _PhaseDetailState extends State<PhaseDetail> {
           color: Color(0xC800D46E),
         );
     }
+  }
+
+  Widget containerButton(IconData icon, Function function){
+    return GestureDetector(
+      onTap: ()=>function,
+      child: Container(
+        child: Icon(
+          icon,
+          size: 30,
+          color:
+          Theme.of(context).scaffoldBackgroundColor,
+        ),
+        decoration: BoxDecoration(
+          color: Color(0xFF9BC1F3),
+          borderRadius: BorderRadius.circular(15),
+        ),
+        margin: EdgeInsets.only(left: 8),
+        padding: EdgeInsets.symmetric(
+            vertical: 9, horizontal: 9),
+      ),
+    );
   }
 }

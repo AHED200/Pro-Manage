@@ -21,9 +21,10 @@ void main() async {
 }
 
 class AppState extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
+    return FutureBuilder (
       future: Firebase.initializeApp(),
       builder: (c, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
@@ -53,10 +54,11 @@ class AppState extends StatelessWidget {
                 BuildContext context,
                 AsyncSnapshot<dynamic> snapshot,
               ) {
-                if (snapshot.data != null) {
-                  return MainScreen();
-                } else
+                if (snapshot.data == null) {
                   return SignUp();
+                } else if(snapshot.data!=null)
+                  return MainScreen();
+                return waitingScreen();
               },
             ),
           );
@@ -66,7 +68,7 @@ class AppState extends StatelessWidget {
     );
   }
 
-  static Widget waitingScreen() {
+  Widget waitingScreen() {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(

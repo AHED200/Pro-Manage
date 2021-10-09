@@ -9,9 +9,11 @@ import 'package:project_management/Screens/AllProjects.dart';
 import 'package:project_management/Screens/AllPhases.dart';
 import 'package:project_management/Screens/Home.dart';
 import 'package:project_management/Screens/Profile.dart';
+import 'package:project_management/Screens/ProjectDetail.dart';
+import 'package:project_management/main.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 
-import '../main.dart';
 
 enum _SelectedTab { home, allTasks, allProjects, profile }
 
@@ -23,6 +25,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   Enum _selectedTab = _SelectedTab.home;
   bool isLoading=true;
+  late MaterialProvider provider;
 
   void setup() async {
     final auth = FirebaseAuth.instance;
@@ -34,7 +37,7 @@ class _MainScreenState extends State<MainScreen> {
         .get()
         .then((value) => {user = UserModel.fromSnapshot(value, uid)});
 
-    MaterialProvider provider = Provider.of<MaterialProvider>(context, listen: false);
+    provider=Provider.of<MaterialProvider>(context, listen: false);
     await provider.getProjects();
     setState(() {
       isLoading=false;
@@ -48,15 +51,10 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   @override
-  void dispose() {
-    setup();
-    super.dispose();
-  }
-  @override
   Widget build(BuildContext context) {
     PageController _pageController = PageController(initialPage: 0);
     return isLoading?
-    AppState.waitingScreen():
+    waitingScreen():
     Scaffold(
       body: PageView(
         controller: _pageController,
@@ -67,6 +65,7 @@ class _MainScreenState extends State<MainScreen> {
           });
         },
         children: [
+          ProjectDetail(project: provider.allProjects[0],),
           Home(),
           AllPhases(),
           AllProjects(),
@@ -110,6 +109,73 @@ class _MainScreenState extends State<MainScreen> {
             },
           ),
         ),
+      ),
+    );
+  }
+
+  Scaffold waitingScreen(){
+    return Scaffold(
+      body: Column(
+        children: [
+          SizedBox(
+            height: 50,
+          ),
+          Expanded(
+            child: Shimmer.fromColors(
+              enabled: true,
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemBuilder: (_, __) => Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        width: 48.0,
+                        height: 48.0,
+                        color: Colors.white,
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8.0),
+                      ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Container(
+                              width: double.infinity,
+                              height: 8.0,
+                              color: Colors.white,
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 2.0),
+                            ),
+                            Container(
+                              width: double.infinity,
+                              height: 8.0,
+                              color: Colors.white,
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 2.0),
+                            ),
+                            Container(
+                              width: 40.0,
+                              height: 8.0,
+                              color: Colors.white,
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                itemCount: 6,
+              ),
+              baseColor: Colors.grey.shade300,
+              highlightColor: Colors.grey.shade700,
+            ),
+          )
+        ],
       ),
     );
   }

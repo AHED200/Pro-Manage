@@ -183,7 +183,7 @@ class _PhaseFieldState extends State<PhaseField> {
                               confirmText: 'Ok',
                               showActionButtons: true,
                               selectionMode:
-                              DateRangePickerSelectionMode.extendableRange,
+                              DateRangePickerSelectionMode.range,
                               onCancel: () {
                                 Navigator.pop(context);
                               },

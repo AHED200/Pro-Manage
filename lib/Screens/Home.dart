@@ -22,7 +22,7 @@ class _HomeState extends State<Home> {
     Size size = MediaQuery.of(context).size;
     MaterialProvider provider = Provider.of<MaterialProvider>(context);
     List<Project> allProjects=provider.allProjects;
-
+    List<Phase> phases =getUncompletedPhases(provider.allProjects);
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -69,9 +69,8 @@ class _HomeState extends State<Home> {
                 ListView.builder(
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
-                    itemCount: getUncompletedPhases(allProjects).length,
+                    itemCount: phases.length,
                     itemBuilder: (context, x) {
-                      List<Phase> phases = getUncompletedPhases(allProjects);
                       return Container(
                         height: 100,
                         margin:

@@ -54,8 +54,8 @@ class _SignUpState extends State<SignUp> {
                             validator: (x) {
                               if (x!.length <= 3)
                                 return 'Should be at least 3 characters.';
-                              else if (!x.contains(' '))
-                                return 'Shouldn\'t contain space';
+                              else if (x.contains(' '))
+                                return "Shouldn't contain space";
                             },
                             decoration: InputDecoration(
                               labelText: 'First name',
@@ -71,7 +71,7 @@ class _SignUpState extends State<SignUp> {
                             validator: (x) {
                               if (x!.length <= 3)
                                 return 'Should be at least 3 characters.';
-                              else if (!x.contains(' '))
+                              else if (x.contains(' '))
                                 return 'Shouldn\'t contain space';
                             },
                             decoration: InputDecoration(
@@ -89,7 +89,7 @@ class _SignUpState extends State<SignUp> {
                       controller: usernameController,
                       textInputAction: TextInputAction.next,
                       validator: (x) {
-                        if (x!.length <= 4) {
+                        if (x!.length <= 3) {
                           return 'The name should be at least 3 characters.';
                         }
                       },
