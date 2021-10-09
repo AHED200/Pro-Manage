@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:project_management/Model/Phase.dart';
 import 'package:project_management/Model/Project.dart';
+import 'package:project_management/Model/Task.dart';
 import 'package:project_management/main.dart';
 
 class MaterialProvider with ChangeNotifier {
@@ -37,6 +39,13 @@ class MaterialProvider with ChangeNotifier {
       'allProjects':FieldValue.arrayRemove([project.uid])
     });
     allProjects.removeWhere((element) => element==project);
+    notifyListeners();
+  }
+
+  void insertNewPhase(String phaseName, String phaseDescription, String startDate, String dueDate, int index, List<Task> tasks, Project project)async{
+    Phase newPhase=Phase.withTask(phaseName, phaseDescription, startDate, dueDate, false, tasks);
+    project.allPhases.insert(index-1, newPhase);
+    await FirebaseFirestore.instance.collection('project').doc(project.uid).update(project.toMap(project.allPhases));
     notifyListeners();
   }
 }

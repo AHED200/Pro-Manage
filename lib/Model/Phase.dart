@@ -7,11 +7,13 @@ class Phase {
   late String _startAt;
   late String _description;
   late bool _isDone;
-  List<Task> _allTasks = [];
+  List<Task> _allTasks=[];
   List<Worker> _allWorkers= [];
 
   Phase(this._phaseName, this._description, this._startAt, this._dueDate,
       this._isDone);
+  Phase.withTask(this._phaseName, this._description, this._startAt, this._dueDate,
+      this._isDone, this._allTasks);
   Phase.fromDocumentSnapshot(Map<String, dynamic> data){
     this._phaseName=data['phaseName'];
     this._dueDate=data['dueDate'];
@@ -19,7 +21,7 @@ class Phase {
     this._description=data['description'];
     this._isDone=data['isDone'];
     // this.allWorkers=data['workers'];
-    // this._allTasks=data['tasks'];
+    this._allTasks=getTaskFromDocument(data['tasks']);
   }
 
   List<Task> get allTasks => _allTasks;
@@ -84,6 +86,14 @@ class Phase {
       task.isDone=true;
   }
 
+  List<Task> getTaskFromDocument(List<dynamic> data){
+    List<Task> tasks=[];
+    for(Map<String, dynamic> ph in data){
+      tasks.add(Task.fromDocumentSnapshot(ph));
+    }
+    return tasks;
+  }
+
   Map<String, dynamic> toMap(){
     Map<String, dynamic> map={
       'phaseName':this._phaseName,
@@ -92,7 +102,10 @@ class Phase {
       'dueDate':this._dueDate,
       'isDone':false,
       'workers':[],
-      'tasks':[],
+      'tasks': [
+        for(Task task in this.allTasks)
+          task.toMap()
+      ],
     };
     return map;
   }

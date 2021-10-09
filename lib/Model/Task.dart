@@ -16,5 +16,17 @@ class Task{
     _taskName = value;
   }
 
+  Task.fromDocumentSnapshot(Map<String, dynamic> data){
+    this._isDone=data['isDone'];
+    this._taskName=data['taskName'];
+  }
 
+  Map<String, dynamic> toMap(){
+    Map<String, dynamic> map={
+      'taskName':this._taskName,
+      'isDone':this.isDone,
+    };
+
+    return map;
+  }
 }

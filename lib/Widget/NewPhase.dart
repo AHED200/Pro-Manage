@@ -3,10 +3,13 @@ import 'package:flash/flash.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:project_management/Helper/GlobalMethod.dart';
+import 'package:project_management/Helper/Provider.dart';
 import 'package:project_management/Helper/constant.dart';
 import 'package:project_management/Model/Phase.dart';
 import 'package:project_management/Model/Project.dart';
+import 'package:project_management/Model/Task.dart';
 import 'package:project_management/Widget/NewTask.dart';
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class NewPhase extends StatefulWidget {
@@ -30,7 +33,7 @@ class _NewPhaseState extends State<NewPhase> {
   Divider divider = Divider(
     height: 25,
   );
-  List<TaskField> taskFields = [];
+  List<TaskField> taskFields=[];
   bool isLoading = false;
 
   @override
@@ -267,7 +270,7 @@ class _NewPhaseState extends State<NewPhase> {
     );
   }
 
-  void insertPhase(bool state) async {
+  void insertPhase(bool state){
     if (state) {
       if (phaseName.text.isNotEmpty) {
 
@@ -275,10 +278,15 @@ class _NewPhaseState extends State<NewPhase> {
           isLoading = true;
         });
 
-        Phase newPhase=Phase(phaseName.text, phaseDescription.text, startDate, dueDate, false);
-        late Project project=widget.project;
-        project.allPhases.insert(index-1, newPhase);
-        await FirebaseFirestore.instance.collection('project').doc(project.uid).update(project.toMap(project.allPhases));
+        List<Task> tasks=[];
+        for(int x=0; x<taskFields.length; x++) {
+          if (taskFields[x].taskController.text!='') {
+            tasks.add(Task(taskFields[x].taskController.text, false));
+          }
+        }
+
+        MaterialProvider provider=Provider.of<MaterialProvider>(context, listen: false);
+        provider.insertNewPhase(phaseName.text, phaseDescription.text, startDate, dueDate, index, tasks,project);
 
         setState(() {
           isLoading=false;
