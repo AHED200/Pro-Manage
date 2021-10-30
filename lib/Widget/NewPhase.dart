@@ -245,7 +245,7 @@ class _NewPhaseState extends State<NewPhase> {
                       padding:
                           EdgeInsets.symmetric(horizontal: 60, vertical: 7),
                       decoration: BoxDecoration(
-                        color: Color(0xFF763F75),
+                        color: Color(0x96633BE5),
                         borderRadius: BorderRadius.circular(7),
                       ),
                       child: Text(

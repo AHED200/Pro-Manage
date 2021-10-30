@@ -13,7 +13,6 @@ class AllPhases extends StatefulWidget {
 }
 
 class _AllTasksState extends State<AllPhases> {
-  List<bool> isOpen=[];
 
   List<Project> allProjects=[];
   @override
@@ -80,5 +79,3 @@ class _AllTasksState extends State<AllPhases> {
     );
   }
 }
-
-

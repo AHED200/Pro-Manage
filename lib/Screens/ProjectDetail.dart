@@ -300,8 +300,7 @@ class _ProjectDetailState extends State<ProjectDetail> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => PhaseDetail(
-                                          project.allPhases[index])));
+                                      builder: (context) => PhaseDetail(project.allPhases[index], project)));
                             },
                             child: Container(
                                 padding: EdgeInsets.all(8),

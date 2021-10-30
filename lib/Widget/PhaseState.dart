@@ -31,13 +31,14 @@ class _PhaseStateState extends State<PhaseState> {
         int x=index+1;
         return GestureDetector(
           onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (builder)=>PhaseDetail(widget.project.allPhases[index])));
+            Navigator.push(context, MaterialPageRoute(builder: (builder)=>PhaseDetail(widget.project.allPhases[index], widget.project)));
           },
           child: Container(
             margin: const EdgeInsets.all(8.0),
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Color(0xA6839DF3),
+              // color: Color(0x27839DF3),
+              border: Border.all(color: Color(0xA6839DF3), width: 3),
               borderRadius: BorderRadius.circular(15)
             ),
             child: Column(

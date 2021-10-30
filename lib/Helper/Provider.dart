@@ -12,40 +12,69 @@ class MaterialProvider with ChangeNotifier {
     if (user!.allProjectsUid.isNotEmpty) {
       await FirebaseFirestore.instance
           .collection('project')
-          .where('projectId', whereIn: user!.allProjectsUid,)
+          .where(
+            'projectId',
+            whereIn: user!.allProjectsUid,
+          )
           .get()
           .then((value) {
-            List<Project> projects = [];
+        List<Project> projects = [];
         for (int x = 0; x < value.size; x++) {
           projects.add(Project.formDocumentSnapshot(value.docs[x]));
         }
-        allProjects=projects;
+        allProjects = projects;
       });
       notifyListeners();
     }
   }
 
-  Future<void> updateProject(Project project)async{
+  Future<void> updateProject(Project project) async {
     await FirebaseFirestore.instance
-        .collection('project').doc(project.uid).update(project.toMap(project.allPhases));
+        .collection('project')
+        .doc(project.uid)
+        .update(project.toMap(project.allPhases));
 
     notifyListeners();
   }
 
-  Future<void> deleteProject(Project project)async{
+  Future<void> deleteProject(Project project) async {
     await FirebaseFirestore.instance
-        .collection('project').doc(project.uid).delete();
+        .collection('project')
+        .doc(project.uid)
+        .delete();
     await FirebaseFirestore.instance.collection('users').doc(user!.uid).update({
-      'allProjects':FieldValue.arrayRemove([project.uid])
+      'allProjects': FieldValue.arrayRemove([project.uid])
     });
-    allProjects.removeWhere((element) => element==project);
+    allProjects.removeWhere((element) => element == project);
     notifyListeners();
   }
 
-  void insertNewPhase(String phaseName, String phaseDescription, String startDate, String dueDate, int index, List<Task> tasks, Project project)async{
-    Phase newPhase=Phase.withTask(phaseName, phaseDescription, startDate, dueDate, false, tasks);
-    project.allPhases.insert(index-1, newPhase);
-    await FirebaseFirestore.instance.collection('project').doc(project.uid).update(project.toMap(project.allPhases));
+  void insertNewPhase(
+      String phaseName,
+      String phaseDescription,
+      String startDate,
+      String dueDate,
+      int index,
+      List<Task> tasks,
+      Project project) async {
+    Phase newPhase = Phase.withTask(
+        phaseName, phaseDescription, startDate, dueDate, false, tasks);
+    project.allPhases.insert(index - 1, newPhase);
+    await FirebaseFirestore.instance
+        .collection('project')
+        .doc(project.uid)
+        .update(project.toMap(project.allPhases));
+    notifyListeners();
+  }
+
+  void updatePhase(Project project) async {
+    //Save all changes
+    await FirebaseFirestore.instance
+        .collection('project')
+        .doc(project.uid)
+        .update({
+      'phases': [for (Phase phase in project.allPhases) phase.toMap()]
+    });
     notifyListeners();
   }
 }

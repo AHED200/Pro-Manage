@@ -235,7 +235,7 @@ class _SignUpState extends State<SignUp> {
           'lastName': lastNameController.text,
           'email': emailController.text,
           'createdAt': Timestamp.now(),
-          'allProjects': FieldValue.arrayUnion(['A', 'B', 'C', 'D']),
+          'allProjects': [],
         });
         await fireStore
             .collection('users')

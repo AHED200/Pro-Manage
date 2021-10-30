@@ -25,7 +25,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   Enum _selectedTab = _SelectedTab.home;
   bool isLoading=true;
-  late MaterialProvider provider;
+  late MaterialProvider provider=Provider.of<MaterialProvider>(context, listen: false);
 
   void setup() async {
     final auth = FirebaseAuth.instance;
@@ -37,7 +37,7 @@ class _MainScreenState extends State<MainScreen> {
         .get()
         .then((value) => {user = UserModel.fromSnapshot(value, uid)});
 
-    provider=Provider.of<MaterialProvider>(context, listen: false);
+
     await provider.getProjects();
     setState(() {
       isLoading=false;
@@ -65,7 +65,6 @@ class _MainScreenState extends State<MainScreen> {
           });
         },
         children: [
-          ProjectDetail(project: provider.allProjects[0],),
           Home(),
           AllPhases(),
           AllProjects(),

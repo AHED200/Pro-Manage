@@ -1,7 +1,7 @@
 import 'package:project_management/Model/Task.dart';
 import 'package:project_management/Model/Worker.dart';
 
-class Phase {
+class Phase{
   late String _phaseName;
   late String _dueDate;
   late String _startAt;
@@ -100,7 +100,7 @@ class Phase {
       'description':'',
       'startAt':this._startAt,
       'dueDate':this._dueDate,
-      'isDone':false,
+      'isDone':this.isDone,
       'workers':[],
       'tasks': [
         for(Task task in this.allTasks)
