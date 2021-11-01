@@ -109,4 +109,10 @@ class Phase{
     };
     return map;
   }
+
+
+  String toString(){
+    return 'Phase name: $_phaseName - Description: $_description - Start at: $_startAt - Due date: $_dueDate - Is done $_isDone';
+  }
+
 }

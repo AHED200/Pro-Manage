@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -211,7 +212,7 @@ class Profile extends StatelessWidget {
                     confirmBtnText: 'yes',
                     onConfirmBtnTap: () {
                       FirebaseAuth.instance.signOut();
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder)=>SignIn()));
+                      Navigator.pop(context);
                     },
                     onCancelBtnTap: ()=>Navigator.pop(context));
               },

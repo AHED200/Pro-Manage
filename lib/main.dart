@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:project_management/Helper/Provider.dart';
 import 'package:project_management/Model/UserModel.dart';
+import 'package:project_management/Screens/AuthScreens/SignIn.dart';
 import 'package:project_management/Screens/AuthScreens/SignUp.dart';
 import 'package:project_management/Screens/MainScreen.dart';
 import 'package:provider/provider.dart';
@@ -55,7 +56,7 @@ class AppState extends StatelessWidget {
                 AsyncSnapshot<dynamic> snapshot,
               ) {
                 if (snapshot.data == null) {
-                  return SignUp();
+                  return SignIn();
                 } else if(snapshot.data!=null)
                   return MainScreen();
                 return waitingScreen();

@@ -14,6 +14,7 @@ import 'package:project_management/Model/Project.dart';
 import 'package:project_management/Screens/MainScreen.dart';
 import 'package:project_management/Screens/PhaseDetails.dart';
 import 'package:project_management/Widget/AppBarContainer.dart';
+import 'package:project_management/Widget/NewNote.dart';
 import 'package:project_management/Widget/NewPhase.dart';
 import 'package:provider/provider.dart';
 import 'package:random_color/random_color.dart';
@@ -38,16 +39,11 @@ class _ProjectDetailState extends State<ProjectDetail> {
   late TextEditingController costController =
       TextEditingController(text: widget.project.theCost);
 
-  //Temp
-  SheetController controller = SheetController();
-
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     Project project = widget.project;
     MaterialProvider provider = Provider.of<MaterialProvider>(context);
-
-    controller.show();
 
     return Scaffold(
       appBar: AppBar(
@@ -271,13 +267,16 @@ class _ProjectDetailState extends State<ProjectDetail> {
                           onPressed: () {
                             showSlidingBottomSheet(context,
                                 builder: (context) => SlidingSheetDialog(
-                                  isDismissable: false,
+                                    isDismissable: false,
                                     snapSpec: SnapSpec(snappings: [0.7, 0.7]),
-                                    controller: controller,
+                                    // controller: controller,
                                     cornerRadius: 20,
                                     border: Border.all(color: Colors.white54),
                                     builder: (context, state) {
-                                      return Material(child: NewPhase(project: project,));
+                                      return Material(
+                                          child: NewPhase(
+                                        project: project,
+                                      ));
                                     }));
                           },
                           icon: Icon(
@@ -300,7 +299,8 @@ class _ProjectDetailState extends State<ProjectDetail> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => PhaseDetail(project.allPhases[index], project)));
+                                      builder: (context) => PhaseDetail(
+                                          project.allPhases[index], project)));
                             },
                             child: Container(
                                 padding: EdgeInsets.all(8),
@@ -343,7 +343,34 @@ class _ProjectDetailState extends State<ProjectDetail> {
                           style: TextStyle(
                               fontSize: 25, fontWeight: FontWeight.w700),
                         ),
-                        containerButton(Icons.edit, () {})
+                        GestureDetector(
+                          onTap: () {
+                            showSlidingBottomSheet(context,
+                                builder: (context) => SlidingSheetDialog(
+                                    isDismissable: false,
+                                    snapSpec: SnapSpec(snappings: [0.7, 0.7]),
+                                    // controller: controller,
+                                    cornerRadius: 20,
+                                    border: Border.all(color: Colors.white54),
+                                    builder: (context, state) {
+                                      return Material(child: NewNote());
+                                    }));
+                          },
+                          child: Container(
+                            child: Icon(
+                              Icons.edit,
+                              size: 30,
+                              color: Theme.of(context).scaffoldBackgroundColor,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Color(0xFF9BC1F3),
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            margin: EdgeInsets.only(left: 8),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 9, horizontal: 9),
+                          ),
+                        ),
                       ],
                     ),
                     SizedBox(
@@ -475,24 +502,5 @@ class _ProjectDetailState extends State<ProjectDetail> {
     RandomColor randomColor = RandomColor();
     return randomColor.randomColor(
         colorSaturation: ColorSaturation.lowSaturation);
-  }
-
-  Widget containerButton(IconData icon, Function function) {
-    return GestureDetector(
-      onTap: () => function,
-      child: Container(
-        child: Icon(
-          icon,
-          size: 30,
-          color: Theme.of(context).scaffoldBackgroundColor,
-        ),
-        decoration: BoxDecoration(
-          color: Color(0xFF9BC1F3),
-          borderRadius: BorderRadius.circular(15),
-        ),
-        margin: EdgeInsets.only(left: 8),
-        padding: EdgeInsets.symmetric(vertical: 9, horizontal: 9),
-      ),
-    );
   }
 }

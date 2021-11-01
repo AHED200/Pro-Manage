@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:project_management/Helper/GlobalMethod.dart';
@@ -12,8 +13,9 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PhaseDetail extends StatefulWidget {
-  final Phase phase;
+  Phase phase;
   final Project project;
+
 
   PhaseDetail(this.phase, this.project);
 
@@ -22,7 +24,7 @@ class PhaseDetail extends StatefulWidget {
 }
 
 class _PhaseDetailState extends State<PhaseDetail> {
-  late Phase phase = widget.phase;
+  // late Phase phase = widget.phase;
   bool _thereTask = false;
   bool _thereWorkers = false;
 
@@ -32,7 +34,7 @@ class _PhaseDetailState extends State<PhaseDetail> {
   final fireStore = FirebaseFirestore.instance;
   bool isEdit = false;
   bool phaseEdit = false;
-  late final phaseNameController = TextEditingController(text: phase.phaseName);
+  late final phaseNameController = TextEditingController(text: widget.phase.phaseName);
 
   @override
   void initState() {
@@ -81,14 +83,14 @@ class _PhaseDetailState extends State<PhaseDetail> {
           children: [
             ListTile(
               title: Text(
-                phase.phaseName,
+                widget.phase.phaseName,
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
               ),
               subtitle: Text(
-                'Due date:  ' + phase.dueDate,
+                'Due date:  ' + widget.phase.dueDate,
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
               ),
-              trailing: getPhaseStateIcon(phase),
+              trailing: getPhaseStateIcon(widget.phase),
               contentPadding: EdgeInsets.only(bottom: 8, top: 15),
             ),
             Expanded(
@@ -103,7 +105,7 @@ class _PhaseDetailState extends State<PhaseDetail> {
                           TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                     ),
                     subtitle: Text(
-                      phase.description != '' ? phase.description : 'None',
+                      widget.phase.description != '' ? widget.phase.description : 'None',
                       softWrap: true,
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
@@ -206,28 +208,28 @@ class _PhaseDetailState extends State<PhaseDetail> {
                   ListView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
-                    itemCount: phase.allTasks.length,
+                    itemCount: widget.phase.allTasks.length,
                     itemBuilder: (context, x) {
                       return Container(
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
-                            color: phase.allTasks[x].isDone
+                            color: widget.phase.allTasks[x].isDone
                                 ? Color(0xFF80BA8C)
                                 : Color(0xFFD9D4FF)),
                         margin: EdgeInsets.only(bottom: 15),
                         padding: EdgeInsets.all(5),
                         child: ListTile(
                             title: Text(
-                              phase.allTasks[x].taskName,
+                              widget.phase.allTasks[x].taskName,
                               style: TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.w600,
-                                  decoration: phase.allTasks[x].isDone
+                                  decoration: widget.phase.allTasks[x].isDone
                                       ? TextDecoration.lineThrough
                                       : null),
                             ),
                             trailing: IconButton(
-                              icon: phase.allTasks[x].isDone
+                              icon: widget.phase.allTasks[x].isDone
                                   ? Icon(
                                       Icons.check_circle_outlined,
                                       size: 40,
@@ -241,7 +243,7 @@ class _PhaseDetailState extends State<PhaseDetail> {
                               onPressed: () {
                                 setState(() {
                                   isEdit = true;
-                                  phase.changeTaskState(phase.allTasks[x]);
+                                  widget.phase.changeTaskState(widget.phase.allTasks[x]);
                                 });
                               },
                             )),
@@ -284,9 +286,9 @@ class _PhaseDetailState extends State<PhaseDetail> {
                   ListView.builder(
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
-                    itemCount: phase.allWorkers.length,
+                    itemCount: widget.phase.allWorkers.length,
                     itemBuilder: (context, index) {
-                      Worker person = phase.allWorkers[index];
+                      Worker person = widget.phase.allWorkers[index];
                       return Container(
                         padding: EdgeInsets.all(4),
                         margin: EdgeInsets.all(6),
@@ -349,33 +351,73 @@ class _PhaseDetailState extends State<PhaseDetail> {
               ),
             ),
             isEdit
-                ? GestureDetector(
-                    onTap: () {
-                      provider.updatePhase(widget.project);
-                      setState(() {
-                        isEdit = false;
-                      });
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      padding:
-                          EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                      margin: EdgeInsets.only(
-                          left: 30, right: 30, top: 12, bottom: 3),
-                      decoration: BoxDecoration(
+                ? Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      isEdit = false;
+                    });
+                    CoolAlert.show(
+                        context: context,
+                        type: CoolAlertType.info,
+                        title: 'Notification',
+                        text: 'All changes will be removed after restarting the application.',
+                        confirmBtnText: 'Ok',
+                        showCancelBtn: false,
+                        onConfirmBtnTap: () => Navigator.pop(context));
+                  },
+                  child: Container(
+                    // width: 100,
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 33),
+                    margin: EdgeInsets.only(left: 6, right: 6, top: 12, bottom: 3),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(9),
+                      border: Border.all(
                         color: Color(0x96633BE5),
-                        borderRadius: BorderRadius.circular(9),
-                      ),
-                      child: Text(
-                        'Save',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                        ),
+                        width: 3
+                      )
+                    ),
+                    child: Text(
+                      'Cancel',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
-                  )
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    provider.updatePhase(widget.project);
+                    setState(() {
+                      isEdit = false;
+                    });
+                  },
+                  child: Container(
+                    // width: 80,
+                    padding:EdgeInsets.symmetric(vertical: 9.5, horizontal: 40),
+                    margin: EdgeInsets.only(
+                        left: 6, right: 6, top: 12, bottom: 3),
+                    decoration: BoxDecoration(
+                      color: Color(0x96633BE5),
+                      borderRadius: BorderRadius.circular(9),
+                    ),
+                    child: Text(
+                      'Save',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            )
                 : Container()
           ],
         ),
