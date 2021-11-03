@@ -4,6 +4,7 @@ import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:intl/intl.dart';
 import 'package:project_management/Helper/GlobalMethod.dart';
 import 'package:project_management/Helper/Provider.dart';
@@ -17,7 +18,7 @@ import 'package:project_management/Widget/AppBarContainer.dart';
 import 'package:project_management/Widget/NewNote.dart';
 import 'package:project_management/Widget/NewPhase.dart';
 import 'package:provider/provider.dart';
-import 'package:random_color/random_color.dart';
+
 import 'package:sliding_sheet/sliding_sheet.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
@@ -249,8 +250,7 @@ class _ProjectDetailState extends State<ProjectDetail> {
               width: size.width,
               decoration: Constant.purpleDecoration,
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+                padding: const EdgeInsets.only(top: 20, left: 15, right: 15),
                 child: ListView(
                   physics: BouncingScrollPhysics(),
                   children: [
@@ -268,7 +268,6 @@ class _ProjectDetailState extends State<ProjectDetail> {
                             showSlidingBottomSheet(context,
                                 builder: (context) => SlidingSheetDialog(
                                     isDismissable: false,
-
                                     snapSpec: SnapSpec(snappings: [0.7, 0.7]),
                                     // controller: controller,
                                     cornerRadius: 20,
@@ -377,13 +376,17 @@ class _ProjectDetailState extends State<ProjectDetail> {
                     SizedBox(
                       height: 12,
                     ),
-                    Wrap(
-                      alignment: WrapAlignment.spaceEvenly,
-                      spacing: 10,
-                      runSpacing: 10,
-                      children: [
-                        for (Note note in widget.project.notes) noteWidget(note)
-                      ],
+                    StaggeredGridView.countBuilder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      crossAxisCount: 4,
+                      itemCount: widget.project.notes.length,
+                      itemBuilder: (BuildContext context, int index) =>
+                          noteWidget(widget.project.notes[index]),
+                      staggeredTileBuilder: (int index) =>
+                          StaggeredTile.fit(2),
+                      mainAxisSpacing: 8.0,
+                      crossAxisSpacing: 8.0,
                     )
                   ],
                 ),
@@ -397,16 +400,15 @@ class _ProjectDetailState extends State<ProjectDetail> {
 
   Widget noteWidget(Note note) {
     return Container(
-      clipBehavior: Clip.antiAlias,
-      width: 170,
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10), color: getNoteColor()),
+          borderRadius: BorderRadius.circular(10),
+          color: getNoteColor(note.color)),
       padding: EdgeInsets.all(5),
       child: RichText(
           text: TextSpan(children: [
-        TextSpan(text: note.createdAt + '\n\n'),
+        TextSpan(text: note.createdAt + '\n'),
         TextSpan(
-            text: note.noteTitle + '\n',
+            text: note.noteTitle + '\n\n',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
         TextSpan(text: note.description, style: TextStyle(fontSize: 15))
       ])),
@@ -499,9 +501,18 @@ class _ProjectDetailState extends State<ProjectDetail> {
     }
   }
 
-  Color getNoteColor() {
-    RandomColor randomColor = RandomColor();
-    return randomColor.randomColor(
-        colorSaturation: ColorSaturation.lowSaturation);
+  Color? getNoteColor(String color) {
+    switch (color) {
+      case 'blueGrey':
+        return Colors.blueGrey;
+      case 'blue':
+        return Colors.blue;
+      case 'red':
+        return Colors.red.shade400;
+      case 'yellowAccent':
+        return Colors.yellow.shade700;
+      case 'lightGreenAccent':
+        return Colors.lightGreenAccent;
+    }
   }
 }

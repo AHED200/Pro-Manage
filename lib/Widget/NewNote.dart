@@ -22,7 +22,7 @@ class _NewNoteState extends State<NewNote> {
     Colors.blueGrey,
     Colors.blue,
     Colors.red.shade400,
-    Colors.yellowAccent.shade400,
+    Colors.yellow.shade700,
     Colors.lightGreenAccent,
   ];
   final space = SizedBox(width: 4);
