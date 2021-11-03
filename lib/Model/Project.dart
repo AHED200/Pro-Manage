@@ -25,7 +25,7 @@ class Project{
     this._theCost=data.get('theCost');
     this._dueDate=data.get('dueDate');
     this._allPhases=getPhaseFromDocument(data.get('phases'));
-    this._notes=[];
+    this._notes=getNoteFromDocument(data.get('notes'));
   }
 
   List<Note> get notes => _notes;
@@ -64,7 +64,7 @@ class Project{
     _projectName = value;
   }
 
-  Map<String, dynamic> toMap(List<Phase> phases){
+  Map<String, dynamic> toMap(List<Phase> phases,){
     Map<String, dynamic> map={
       'projectId':this._uid,
       'projectName': this._projectName,
@@ -75,6 +75,10 @@ class Project{
         for(Phase phase in phases)
           phase.toMap()
       ],
+      'notes':[
+        for(Note note in this._notes)
+          note.toMap()
+      ]
     };
     return map;
   }
@@ -85,5 +89,13 @@ class Project{
       phases.add(Phase.fromDocumentSnapshot(ph));
     }
     return phases;
+  }
+
+  List<Note> getNoteFromDocument(List<dynamic> data){
+    List<Note> notes=[];
+    for(Map<String, dynamic> note in data){
+      notes.add(Note.fromSnapshot(note));
+    }
+    return notes;
   }
 }

@@ -268,6 +268,7 @@ class _ProjectDetailState extends State<ProjectDetail> {
                             showSlidingBottomSheet(context,
                                 builder: (context) => SlidingSheetDialog(
                                     isDismissable: false,
+
                                     snapSpec: SnapSpec(snappings: [0.7, 0.7]),
                                     // controller: controller,
                                     cornerRadius: 20,
@@ -353,7 +354,7 @@ class _ProjectDetailState extends State<ProjectDetail> {
                                     cornerRadius: 20,
                                     border: Border.all(color: Colors.white54),
                                     builder: (context, state) {
-                                      return Material(child: NewNote());
+                                      return Material(child: NewNote(project));
                                     }));
                           },
                           child: Container(
@@ -381,7 +382,7 @@ class _ProjectDetailState extends State<ProjectDetail> {
                       spacing: 10,
                       runSpacing: 10,
                       children: [
-                        for (var note in project.notes) noteWidget(note)
+                        for (Note note in widget.project.notes) noteWidget(note)
                       ],
                     )
                   ],
@@ -405,7 +406,7 @@ class _ProjectDetailState extends State<ProjectDetail> {
           text: TextSpan(children: [
         TextSpan(text: note.createdAt + '\n\n'),
         TextSpan(
-            text: note.note + '\n',
+            text: note.noteTitle + '\n',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
         TextSpan(text: note.description, style: TextStyle(fontSize: 15))
       ])),

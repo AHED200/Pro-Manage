@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:project_management/Model/Note.dart';
 import 'package:project_management/Model/Phase.dart';
 import 'package:project_management/Model/Project.dart';
 import 'package:project_management/Model/Task.dart';
@@ -76,6 +77,13 @@ class MaterialProvider with ChangeNotifier {
         .doc(project.uid)
         .update({
       'phases': [for (Phase phase in project.allPhases) phase.toMap()]
+    });
+    notifyListeners();
+  }
+
+  void newNote(Note note, String projectUid)async{
+    await FirebaseFirestore.instance.collection('project').doc(projectUid).update({
+      'notes':FieldValue.arrayUnion([note.toMap()])
     });
     notifyListeners();
   }
