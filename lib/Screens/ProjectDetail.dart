@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:cool_alert/cool_alert.dart';
+import 'package:flash/flash.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -383,8 +384,7 @@ class _ProjectDetailState extends State<ProjectDetail> {
                       itemCount: widget.project.notes.length,
                       itemBuilder: (BuildContext context, int index) =>
                           noteWidget(widget.project.notes[index]),
-                      staggeredTileBuilder: (int index) =>
-                          StaggeredTile.fit(2),
+                      staggeredTileBuilder: (int index) => StaggeredTile.fit(2),
                       mainAxisSpacing: 8.0,
                       crossAxisSpacing: 8.0,
                     )
@@ -399,19 +399,59 @@ class _ProjectDetailState extends State<ProjectDetail> {
   }
 
   Widget noteWidget(Note note) {
-    return Container(
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: getNoteColor(note.color)),
-      padding: EdgeInsets.all(5),
-      child: RichText(
-          text: TextSpan(children: [
-        TextSpan(text: note.createdAt + '\n'),
-        TextSpan(
-            text: note.noteTitle + '\n\n',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
-        TextSpan(text: note.description, style: TextStyle(fontSize: 15))
-      ])),
+    return GestureDetector(
+      onTap: () {
+        showFlash(
+            context: context,
+            builder: (context, controller) {
+              return Flash.dialog(
+                  controller: controller,
+                  boxShadows: kElevationToShadow[4],
+                  backgroundColor: getNoteColor(note.color),
+                  // borderColor: Color(0xDA280690),
+                  // borderWidth: 2,
+                  borderRadius: BorderRadius.circular(12),
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Wrap(
+                      children: [
+                        RichText(
+                            text: TextSpan(children: [
+                          TextSpan(
+                            text: note.noteTitle + '\r\r\r\r\r',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w700),
+                          ),
+                          TextSpan(
+                            text: note.createdAt + '\n\n',
+                            style:
+                                TextStyle(fontSize: 17, color: Color(0xc0ffffff)),
+                          ),
+                          TextSpan(
+                            text: note.description+ '\n\n',
+                            style:
+                                TextStyle(fontSize: 17),
+                          ),
+                        ]))
+                      ],
+                    ),
+                  ));
+            });
+      },
+      child: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: getNoteColor(note.color)),
+        padding: EdgeInsets.all(5),
+        child: RichText(
+            text: TextSpan(children: [
+          TextSpan(text: note.createdAt + '\n'),
+          TextSpan(
+              text: note.noteTitle + '\n\n',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
+          TextSpan(text: note.description, style: TextStyle(fontSize: 15))
+        ])),
+      ),
     );
   }
 
