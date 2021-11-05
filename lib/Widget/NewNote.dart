@@ -144,7 +144,7 @@ class _NewNoteState extends State<NewNote> {
               ),
             ),
             GestureDetector(
-              onTap: () async {
+              onTap: (){
                 MaterialProvider provider = Provider.of<MaterialProvider>(context, listen: false);
                 Note newNote=Note(titleController.text, contentController.text, getDate(DateTime.now()), getColorString().toString());
                 widget.project.notes.add(newNote);

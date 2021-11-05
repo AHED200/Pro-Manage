@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:flash/flash.dart';
 
@@ -408,8 +409,6 @@ class _ProjectDetailState extends State<ProjectDetail> {
                   controller: controller,
                   boxShadows: kElevationToShadow[4],
                   backgroundColor: getNoteColor(note.color),
-                  // borderColor: Color(0xDA280690),
-                  // borderWidth: 2,
                   borderRadius: BorderRadius.circular(12),
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
@@ -438,6 +437,25 @@ class _ProjectDetailState extends State<ProjectDetail> {
                   ));
             });
       },
+      onLongPress: (){
+        CoolAlert.show(
+            context: context,
+            type: CoolAlertType.confirm,
+            title: 'Delete note',
+            text: 'Are your sure for deleting this note.',
+            confirmBtnText: 'Yes',
+            showCancelBtn: false,
+            onConfirmBtnTap: () async{
+                await FirebaseFirestore.instance.collection('project').doc(widget.project.uid).update({
+                  'notes':FieldValue.arrayRemove([note.toMap()])
+                });
+              setState(() {
+                widget.project.notes.remove(note);
+              });
+              Navigator.pop(context);
+            }
+        );
+      },
       child: Container(
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
@@ -445,9 +463,8 @@ class _ProjectDetailState extends State<ProjectDetail> {
         padding: EdgeInsets.all(5),
         child: RichText(
             text: TextSpan(children: [
-          TextSpan(text: note.createdAt + '\n'),
           TextSpan(
-              text: note.noteTitle + '\n\n',
+              text: note.noteTitle + '\n',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
           TextSpan(text: note.description, style: TextStyle(fontSize: 15))
         ])),
@@ -552,7 +569,7 @@ class _ProjectDetailState extends State<ProjectDetail> {
       case 'yellowAccent':
         return Colors.yellow.shade700;
       case 'lightGreenAccent':
-        return Colors.lightGreenAccent;
+        return Colors.lightGreen;
     }
   }
 }

@@ -1,10 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:project_management/Helper/Provider.dart';
 import 'package:project_management/Model/Project.dart';
-import 'package:project_management/Screens/AuthScreens/SignIn.dart';
 import 'package:project_management/main.dart';
 import 'package:provider/provider.dart';
 

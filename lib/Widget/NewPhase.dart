@@ -8,7 +8,7 @@ import 'package:project_management/Helper/constant.dart';
 import 'package:project_management/Model/Phase.dart';
 import 'package:project_management/Model/Project.dart';
 import 'package:project_management/Model/Task.dart';
-import 'package:project_management/Widget/NewTask.dart';
+import 'package:project_management/Widget/TaskField.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 

@@ -45,6 +45,12 @@ class _PhaseDetailState extends State<PhaseDetail> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     Divider divider = Divider(
@@ -471,14 +477,19 @@ class TaskFiled extends StatelessWidget {
 }
 
 class NewTask extends StatefulWidget {
-  const NewTask({Key? key}) : super(key: key);
-
   @override
   _NewTaskState createState() => _NewTaskState();
 }
 
 class _NewTaskState extends State<NewTask> {
-  static List<TaskFiled> taskFields = [TaskFiled('1')];
+  static List<TaskFiled> taskFields=[];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    taskFields = [TaskFiled('1')];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -523,74 +534,3 @@ class _NewTaskState extends State<NewTask> {
     );
   }
 }
-
-//Finish phase
-
-// GestureDetector(
-// onTap: () {
-// setState(() {
-// phase.finishPhase();
-// });
-// },
-// child: Container(
-// margin: EdgeInsets.all(15),
-// width: size.width,
-// padding: EdgeInsets.all(8),
-// decoration: BoxDecoration(
-// color: Color(0xFF1CCC57),
-// borderRadius: BorderRadius.circular(10)),
-// child: Text(
-// 'Finish phase',
-// textAlign: TextAlign.center,
-// style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
-// ),
-// ),GestureDetector(
-// onTap: () {
-// setState(() {
-// phase.finishPhase();
-// });
-// },
-// child: Container(
-// margin: EdgeInsets.all(15),
-// width: size.width,
-// padding: EdgeInsets.all(8),
-// decoration: BoxDecoration(
-// color: Color(0xFF1CCC57),
-// borderRadius: BorderRadius.circular(10)),
-// child: Text(
-// 'Finish phase',
-// textAlign: TextAlign.center,
-// style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
-// ),
-// ),
-
-//Cancel changes button
-
-// GestureDetector(
-// onTap: () {
-// //Cancel changes
-// setState(() {
-// isEdit = false;
-// });
-// },
-// child: Container(
-// width: double.infinity,
-// padding:
-// EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-// margin: EdgeInsets.only(
-// left: 30, right: 30, top: 12, bottom: 3),
-// decoration: BoxDecoration(
-// border:
-// Border.all(color: Color(0x96633BE5), width: 3),
-// borderRadius: BorderRadius.circular(9),
-// ),
-// child: Text(
-// 'Cancel',
-// textAlign: TextAlign.center,
-// style: TextStyle(
-// fontSize: 20,
-// fontWeight: FontWeight.w700,
-// ),
-// ),
-// ),
-// ),
