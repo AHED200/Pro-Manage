@@ -146,7 +146,7 @@ class _NewNoteState extends State<NewNote> {
             GestureDetector(
               onTap: (){
                 MaterialProvider provider = Provider.of<MaterialProvider>(context, listen: false);
-                Note newNote=Note(titleController.text, contentController.text, getDate(DateTime.now()), getColorString().toString());
+                Note newNote=Note(titleController.text, contentController.text.replaceAll(new RegExp(r'(?:[\t ]*(?:\r?\n|\r))+'), '\n'), getDate(DateTime.now()), getColorString().toString());
                 widget.project.notes.add(newNote);
                 provider.newNote(newNote, widget.project.uid);
                 Navigator.pop(context);

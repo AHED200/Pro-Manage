@@ -1,10 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:project_management/Helper/Provider.dart';
+import 'package:project_management/Model/Phase.dart';
 import 'package:project_management/Model/Project.dart';
 import 'package:project_management/main.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
 class Profile extends StatelessWidget {
   final TextStyle styleTitle =
@@ -212,7 +215,7 @@ class Profile extends StatelessWidget {
                       FirebaseAuth.instance.signOut();
                       Navigator.pop(context);
                     },
-                    onCancelBtnTap: ()=>Navigator.pop(context));
+                    onCancelBtnTap: () => Navigator.pop(context));
               },
               child: Container(
                 margin: EdgeInsets.symmetric(horizontal: 15, vertical: 50),
@@ -229,6 +232,43 @@ class Profile extends StatelessWidget {
             )
           ],
         ),
+      ),
+
+      //Temp floating button
+      floatingActionButton: FloatingActionButton(
+        child: Text('T'),
+        backgroundColor: Colors.orange[400],
+        onPressed: () async {
+          MaterialProvider provider = Provider.of<MaterialProvider>(context, listen: false);
+          //Setup project
+          final phases = [
+            Phase('Phase 1', 'This is first phase', '2020-09-20', '2022-09-20', false),
+            Phase('Phase 2', 'This is second phase', '2022-09-20', '2022-09-20', false),
+            Phase('Phase 3', 'This is first phase', '2023-09-20', '2022-09-20', false),
+            Phase('Phase 4', 'This is first phase', '2024-09-20', '2022-09-20', false),
+            Phase('Phase 5', 'This is first phase', '2021-09-20', '2022-09-20', true),
+          ];
+
+          final String projectUid = Uuid().v4();
+          final String dueDate = '2022-07-24';
+          Project project = Project(
+              projectUid, 'Test project', dueDate, '10000', false, phases, []);
+          String userId = FirebaseAuth.instance.currentUser!.uid;
+
+          final firestore = FirebaseFirestore.instance;
+
+          //Add project UID in user projects list
+          await firestore.collection('users').doc(userId).update({
+            'allProjects': FieldValue.arrayUnion([projectUid])
+          });
+          user!.allProjectsUid.add(projectUid);
+
+          //Create new project in Firestore
+          await firestore.collection('project').doc(projectUid).set(project.toMap());
+
+          //Update application
+          await provider.getProjects();
+        },
       ),
     );
   }

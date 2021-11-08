@@ -55,7 +55,7 @@ class _NewProjectState extends State<NewProject> {
             ? format.format(DateTime.now()).toString()
             : dueDate.toString();
         Project project = Project(projectUid, projectNameController.text,
-            dueDate.toString(), costController.text, false);
+            dueDate.toString(), costController.text, false, phases, []);
         String userId = FirebaseAuth.instance.currentUser!.uid;
 
         //Add project UID in user projects list
@@ -68,7 +68,7 @@ class _NewProjectState extends State<NewProject> {
         await firestore
             .collection('project')
             .doc(projectUid)
-            .set(project.toMap(phases));
+            .set(project.toMap());
 
         //Update application
         await provider.getProjects();

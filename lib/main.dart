@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:project_management/Helper/Provider.dart';
 import 'package:project_management/Model/UserModel.dart';
 import 'package:project_management/Screens/AuthScreens/SignIn.dart';
-import 'package:project_management/Screens/AuthScreens/SignUp.dart';
 import 'package:project_management/Screens/MainScreen.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';

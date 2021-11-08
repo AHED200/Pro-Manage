@@ -82,10 +82,7 @@ class _ProjectDetailState extends State<ProjectDetail> {
                         confirmBtnColor: Colors.redAccent,
                         onConfirmBtnTap: () async {
                           await provider.deleteProject(project);
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (builder) => MainScreen()));
+                          Navigator.pop(context);
                         },
                         cancelBtnText: 'Cancel',
                         showCancelBtn: true,

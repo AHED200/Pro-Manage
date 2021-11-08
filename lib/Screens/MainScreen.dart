@@ -38,7 +38,7 @@ class _MainScreenState extends State<MainScreen> {
         .then((value) => {user = UserModel.fromSnapshot(value, uid)});
 
 
-    await provider.getProjects();
+    provider.getProjects();
     setState(() {
       isLoading=false;
     });

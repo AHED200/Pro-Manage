@@ -33,7 +33,13 @@ class _NewPhaseState extends State<NewPhase> {
   Divider divider = Divider(
     height: 25,
   );
-  List<TaskField> taskFields=[];
+  VerticalDivider verticalDivider = VerticalDivider(
+    thickness: 1,
+    indent: 10,
+    endIndent: 10,
+    width: 25,
+  );
+  List<TaskField> taskFields = [];
   bool isLoading = false;
 
   @override
@@ -57,34 +63,38 @@ class _NewPhaseState extends State<NewPhase> {
             ),
             Container(
               decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.white12,
-                  ),
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(50),
                   color: Color(0xFF644E70)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                      onPressed: () {
-                        if (index > 1) {
-                          setState(() {
-                            index--;
-                          });
-                        }
-                      },
-                      icon: Icon(Icons.remove)),
-                  Text('#$index'),
-                  IconButton(
-                      onPressed: () {
-                        if (index <= project.allPhases.length) {
-                          setState(() {
-                            index++;
-                          });
-                        }
-                      },
-                      icon: Icon(Icons.add)),
-                ],
+              child: IntrinsicHeight(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                        onPressed: () {
+                          if (index > 1) {
+                            setState(() {
+                              index--;
+                            });
+                          }
+                        },
+                        splashColor: Colors.transparent,
+
+                        icon: Icon(Icons.remove)),
+                    verticalDivider,
+                    Text('#$index'),
+                    verticalDivider,
+                    IconButton(
+                        onPressed: () {
+                          if (index <= project.allPhases.length) {
+                            setState(() {
+                              index++;
+                            });
+                          }
+                        },
+                        splashColor: Colors.transparent,
+                        icon: Icon(Icons.add)),
+                  ],
+                ),
               ),
             )
           ],
@@ -258,42 +268,42 @@ class _NewPhaseState extends State<NewPhase> {
                 ],
               )
             : Center(
-              child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-                  decoration: BoxDecoration(
-                    color: Color(0x96633BE5),
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: CircularProgressIndicator()),
-            ),
+                child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                    decoration: BoxDecoration(
+                      color: Color(0x96633BE5),
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: CircularProgressIndicator()),
+              ),
       ],
     );
   }
 
-  void insertPhase(bool state){
+  void insertPhase(bool state) {
     if (state) {
       if (phaseName.text.isNotEmpty) {
-
         setState(() {
           isLoading = true;
         });
 
-        List<Task> tasks=[];
-        for(int x=0; x<taskFields.length; x++) {
-          if (taskFields[x].taskController.text!='') {
+        List<Task> tasks = [];
+        for (int x = 0; x < taskFields.length; x++) {
+          if (taskFields[x].taskController.text != '') {
             tasks.add(Task(taskFields[x].taskController.text, false));
           }
         }
 
-        MaterialProvider provider=Provider.of<MaterialProvider>(context, listen: false);
-        provider.insertNewPhase(phaseName.text, phaseDescription.text, startDate, dueDate, index, tasks,project);
+        MaterialProvider provider =
+            Provider.of<MaterialProvider>(context, listen: false);
+        provider.insertNewPhase(phaseName.text, phaseDescription.text,
+            startDate, dueDate, index, tasks, project);
 
         setState(() {
-          isLoading=false;
+          isLoading = false;
         });
         Navigator.pop(context);
-
-      }else
+      } else
         showFlash(
             context: context,
             duration: Duration(seconds: 4),
@@ -302,13 +312,10 @@ class _NewPhaseState extends State<NewPhase> {
                   controller: controller,
                   backgroundColor: Color(0xBB393939),
                   borderRadius: BorderRadius.circular(10),
-                  margin: EdgeInsets.symmetric(
-                      horizontal: 15, vertical: 40),
-                  forwardAnimationCurve:
-                  Curves.easeOutBack,
-                  child: FlashBar(
-                      content: Text(
-                          'You must enter the phase name')));
+                  margin: EdgeInsets.symmetric(horizontal: 15, vertical: 40),
+                  forwardAnimationCurve: Curves.easeOutBack,
+                  child:
+                      FlashBar(content: Text('You must enter the phase name')));
             });
     } else
       Navigator.pop(context);

@@ -17,7 +17,7 @@ class Project{
     _uid = value;
   }
 
-  Project(this._uid ,this._projectName, this._dueDate, this._theCost, this._isDone);
+  Project(this._uid ,this._projectName, this._dueDate, this._theCost, this._isDone, this._allPhases, this._notes);
   Project.formDocumentSnapshot(DocumentSnapshot data){
     this._uid=data.get('projectId');
     this._projectName=data.get('projectName');
@@ -64,7 +64,7 @@ class Project{
     _projectName = value;
   }
 
-  Map<String, dynamic> toMap(List<Phase> phases,){
+  Map<String, dynamic> toMap(){
     Map<String, dynamic> map={
       'projectId':this._uid,
       'projectName': this._projectName,
@@ -72,7 +72,7 @@ class Project{
       'theCost':this._theCost,
       'isDone':false,
       'phases':[
-        for(Phase phase in phases)
+        for(Phase phase in this._allPhases)
           phase.toMap()
       ],
       'notes':[
