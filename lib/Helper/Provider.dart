@@ -11,40 +11,42 @@ class MaterialProvider with ChangeNotifier {
   final firestore = FirebaseFirestore.instance;
 
   Future<void> getProjects() async {
-    if (user!.allProjectsUid.isNotEmpty) {
-      await firestore
-          .collection('project')
-          .where(
-            'projectId',
-            whereIn: user!.allProjectsUid,
-          )
-          .get()
-          .then((value) {
-        List<Project> projects = [];
-        for (int x = 0; x < value.size; x++) {
-          print("value Size is:"+value.size.toString());
-          projects.add(Project.formDocumentSnapshot(value.docs[x]));
-        }
-        allProjects = projects;
-      });
-      notifyListeners();
-    }
+    //This list for delete REPETITION
+    List<Project> projects = [];
+
+    await firestore
+        .collection('projectRepository')
+        .doc(user!.projectRepositoryId)
+        .get()
+        .then((value) {
+      for (int x = 0; x < user!.projectsId.length; x++) {
+        projects.add(Project.formDocumentSnapshot(value.get(user!.projectsId[x])));
+      }
+    });
+    allProjects=projects;
+    notifyListeners();
   }
 
   Future<void> updateProject(Project project) async {
     await firestore
-        .collection('project')
-        .doc(project.uid)
-        .update(project.toMap());
+        .collection('projectRepository')
+        .doc(user!.projectRepositoryId)
+        .update({project.uid: project.toMap()});
 
     notifyListeners();
   }
 
   Future<void> deleteProject(Project project) async {
-    await firestore.collection('project').doc(project.uid).delete();
+
+    await firestore
+        .collection('projectRepository')
+        .doc(user!.projectRepositoryId)
+        .update({project.uid: FieldValue.delete()});
+
     await FirebaseFirestore.instance.collection('users').doc(user!.uid).update({
-      'allProjects': FieldValue.arrayRemove([project.uid])
+      'projectsId': FieldValue.arrayRemove([project.uid])
     });
+    user!.projectsId.remove(project.uid);
     allProjects.removeWhere((element) => element == project);
     notifyListeners();
   }
@@ -61,31 +63,9 @@ class MaterialProvider with ChangeNotifier {
         phaseName, phaseDescription, startDate, dueDate, false, tasks);
     project.allPhases.insert(index - 1, newPhase);
     await firestore
-        .collection('project')
-        .doc(project.uid)
-        .update(project.toMap());
-    notifyListeners();
-  }
-
-  void updatePhase(Project project) async {
-    //Save all changes
-    await firestore.collection('project').doc(project.uid).update({
-      'phases': [for (Phase phase in project.allPhases) phase.toMap()]
-    });
-    notifyListeners();
-  }
-
-  void newNote(Note note, String projectUid) async {
-    await firestore.collection('project').doc(projectUid).update({
-      'notes': FieldValue.arrayUnion([note.toMap()])
-    });
-    notifyListeners();
-  }
-
-  void deletePhase(String projectUid, Phase phase) async {
-    await firestore.collection('project').doc(projectUid).update({
-      'phases': FieldValue.arrayRemove([phase.toMap()])
-    });
+        .collection('projectRepository')
+        .doc(user!.projectRepositoryId)
+        .update({project.uid: project.toMap()});
     notifyListeners();
   }
 }

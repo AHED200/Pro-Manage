@@ -97,7 +97,7 @@ class Phase{
   Map<String, dynamic> toMap(){
     Map<String, dynamic> map={
       'phaseName':this._phaseName,
-      'description':'',
+      'description':this._description,
       'startAt':this._startAt,
       'dueDate':this._dueDate,
       'isDone':this.isDone,

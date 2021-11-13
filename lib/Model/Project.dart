@@ -18,14 +18,14 @@ class Project{
   }
 
   Project(this._uid ,this._projectName, this._dueDate, this._theCost, this._isDone, this._allPhases, this._notes);
-  Project.formDocumentSnapshot(DocumentSnapshot data){
-    this._uid=data.get('projectId');
-    this._projectName=data.get('projectName');
-    this._isDone=data.get('isDone');
-    this._theCost=data.get('theCost');
-    this._dueDate=data.get('dueDate');
-    this._allPhases=getPhaseFromDocument(data.get('phases'));
-    this._notes=getNoteFromDocument(data.get('notes'));
+  Project.formDocumentSnapshot(Map data){
+    this._uid=data['projectId'];
+    this._projectName=data['projectName'];
+    this._isDone=data['isDone'];
+    this._theCost=data['theCost'];
+    this._dueDate=data['dueDate'];
+    this._allPhases=getPhaseFromDocument(data['phases']);
+    this._notes=getNoteFromDocument(data['notes']);
   }
 
   List<Note> get notes => _notes;

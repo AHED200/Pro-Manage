@@ -105,6 +105,7 @@ class _NewPhaseState extends State<NewPhase> {
         ),
         TextField(
           controller: phaseName,
+          maxLength: 25,
           decoration: InputDecoration(labelText: 'Phase name'),
         ),
         divider,

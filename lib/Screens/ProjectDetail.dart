@@ -83,6 +83,7 @@ class _ProjectDetailState extends State<ProjectDetail> {
                         onConfirmBtnTap: () async {
                           await provider.deleteProject(project);
                           Navigator.pop(context);
+                          Navigator.pop(context);
                         },
                         cancelBtnText: 'Cancel',
                         showCancelBtn: true,

@@ -9,7 +9,6 @@ import 'package:project_management/Screens/AllProjects.dart';
 import 'package:project_management/Screens/AllPhases.dart';
 import 'package:project_management/Screens/Home.dart';
 import 'package:project_management/Screens/Profile.dart';
-import 'package:project_management/Screens/ProjectDetail.dart';
 import 'package:project_management/main.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
@@ -36,9 +35,7 @@ class _MainScreenState extends State<MainScreen> {
         .doc(uid)
         .get()
         .then((value) => {user = UserModel.fromSnapshot(value, uid)});
-
-
-    provider.getProjects();
+    await provider.getProjects();
     setState(() {
       isLoading=false;
     });

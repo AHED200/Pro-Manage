@@ -7,6 +7,7 @@ import 'package:project_management/Model/UserModel.dart';
 import 'package:project_management/Screens/AuthScreens/SignIn.dart';
 import 'package:project_management/Screens/MainScreen.dart';
 import 'package:project_management/main.dart';
+import 'package:uuid/uuid.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -235,7 +236,8 @@ class _SignUpState extends State<SignUp> {
           'lastName': lastNameController.text,
           'email': emailController.text,
           'createdAt': Timestamp.now(),
-          'allProjects': [],
+          'projectRepositoryId': Uuid().v4(),
+          'projectsId':[],
         });
         await fireStore
             .collection('users')

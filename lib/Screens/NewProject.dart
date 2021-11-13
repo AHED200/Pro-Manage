@@ -58,17 +58,19 @@ class _NewProjectState extends State<NewProject> {
             dueDate.toString(), costController.text, false, phases, []);
         String userId = FirebaseAuth.instance.currentUser!.uid;
 
-        //Add project UID in user projects list
-        await firestore.collection('users').doc(userId).update({
-          'allProjects': FieldValue.arrayUnion([projectUid])
-        });
-        user!.allProjectsUid.add(projectUid);
-
         //Create new project in Firestore
         await firestore
-            .collection('project')
-            .doc(projectUid)
-            .set(project.toMap());
+            .collection('projectRepository')
+            .doc(user!.projectRepositoryId)
+            .update({
+          projectUid: project.toMap(),
+        });
+
+        // Add project UID in user projects list
+        await firestore.collection('users').doc(userId).update({
+          'projectsId': FieldValue.arrayUnion([projectUid])
+        });
+        user!.projectsId.add(projectUid);
 
         //Update application
         await provider.getProjects();

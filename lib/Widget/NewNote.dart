@@ -148,7 +148,8 @@ class _NewNoteState extends State<NewNote> {
                 MaterialProvider provider = Provider.of<MaterialProvider>(context, listen: false);
                 Note newNote=Note(titleController.text, contentController.text.replaceAll(new RegExp(r'(?:[\t ]*(?:\r?\n|\r))+'), '\n'), getDate(DateTime.now()), getColorString().toString());
                 widget.project.notes.add(newNote);
-                provider.newNote(newNote, widget.project.uid);
+                // provider.newNote(newNote, widget.project.uid);
+                provider.updateProject(widget.project);
                 Navigator.pop(context);
               },
               child: Container(

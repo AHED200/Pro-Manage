@@ -239,14 +239,20 @@ class Profile extends StatelessWidget {
         child: Text('T'),
         backgroundColor: Colors.orange[400],
         onPressed: () async {
-          MaterialProvider provider = Provider.of<MaterialProvider>(context, listen: false);
+          MaterialProvider provider =
+              Provider.of<MaterialProvider>(context, listen: false);
           //Setup project
           final phases = [
-            Phase('Phase 1', 'This is first phase', '2020-09-20', '2022-09-20', false),
-            Phase('Phase 2', 'This is second phase', '2022-09-20', '2022-09-20', false),
-            Phase('Phase 3', 'This is first phase', '2023-09-20', '2022-09-20', false),
-            Phase('Phase 4', 'This is first phase', '2024-09-20', '2022-09-20', false),
-            Phase('Phase 5', 'This is first phase', '2021-09-20', '2022-09-20', true),
+            Phase('Phase 1', 'This is first phase', '2020-09-20', '2022-09-20',
+                false),
+            Phase('Phase 2', 'This is second phase', '2022-09-20', '2022-09-20',
+                false),
+            Phase('Phase 3', 'This is first phase', '2023-09-20', '2022-09-20',
+                false),
+            Phase('Phase 4', 'This is first phase', '2024-09-20', '2022-09-20',
+                false),
+            Phase('Phase 5', 'This is first phase', '2021-09-20', '2022-09-20',
+                true),
           ];
 
           final String projectUid = Uuid().v4();
@@ -257,14 +263,19 @@ class Profile extends StatelessWidget {
 
           final firestore = FirebaseFirestore.instance;
 
-          //Add project UID in user projects list
-          await firestore.collection('users').doc(userId).update({
-            'allProjects': FieldValue.arrayUnion([projectUid])
-          });
-          user!.allProjectsUid.add(projectUid);
-
           //Create new project in Firestore
-          await firestore.collection('project').doc(projectUid).set(project.toMap());
+          await firestore
+              .collection('projectRepository')
+              .doc(user!.projectRepositoryId)
+              .update({
+            projectUid: project.toMap(),
+          });
+
+          // Add project UID in user projects list
+          await firestore.collection('users').doc(userId).update({
+            'projectsId': FieldValue.arrayUnion([projectUid])
+          });
+          user!.projectsId.add(projectUid);
 
           //Update application
           await provider.getProjects();

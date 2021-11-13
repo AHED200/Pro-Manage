@@ -7,7 +7,8 @@ class UserModel{
   late String _lastName;
   late String _email;
   late String _createdAt;
-  late List<dynamic> _allProjectsUid;
+  late String _projectRepositoryId;
+  late List<dynamic> _projectsId;
   late int _projectsCount;
   late int _finishedProjects;
 
@@ -21,7 +22,8 @@ class UserModel{
     Timestamp timestamp=snapshot.get('createdAt');
     DateTime date = timestamp.toDate();
     this._createdAt='${date.year}-${date.month}-${date.day}';
-    this._allProjectsUid=snapshot.get('allProjects').toList();
+    this._projectRepositoryId=snapshot.get('projectRepositoryId');
+    this._projectsId=snapshot.get('projectsId').toList();
   }
 
   String get uid => _uid;
@@ -72,9 +74,15 @@ class UserModel{
     _firstName = value;
   }
 
-  List<dynamic> get allProjectsUid => _allProjectsUid;
+  String get projectRepositoryId => _projectRepositoryId;
 
-  set allProjectsUid(List<dynamic> value) {
-    _allProjectsUid = value;
+  set projectRepositoryId(String value) {
+    _projectRepositoryId = value;
+  }
+
+  List<dynamic> get projectsId => _projectsId;
+
+  set projectsId(List<dynamic> value) {
+    _projectsId = value;
   }
 }
