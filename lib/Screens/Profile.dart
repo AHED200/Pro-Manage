@@ -17,7 +17,7 @@ class Profile extends StatelessWidget {
   final TextStyle titleStyle =
       TextStyle(fontSize: 25, fontWeight: FontWeight.w600);
 
-  final Color color = Color(0xFF2A2B30);
+  final Color color = Color(0xFF38393B);
   final Color red = Color(0xFFF83B3B);
 
   List<Project> allProjects = [];

@@ -32,7 +32,7 @@ class AppState extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
               brightness: Brightness.dark,
-              scaffoldBackgroundColor: Color(0xFF1D1E2A),
+              scaffoldBackgroundColor: Color(0xFF292C32),
               inputDecorationTheme: InputDecorationTheme(
                 filled: true,
                 fillColor: Color(0x25633BE5),

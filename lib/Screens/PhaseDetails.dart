@@ -103,7 +103,7 @@ class _PhaseDetailState extends State<PhaseDetail> {
                             'Phase',
                           )),
                     ),
-                    SizedBox(height: 10,),
+                    SizedBox(height: 6,),
                     ListTile(
                       leading: Text(
                         'Dates',
@@ -190,6 +190,7 @@ class _PhaseDetailState extends State<PhaseDetail> {
                             'Description',
                           )),
                     ),
+                    SizedBox(height: 10,),
                   ],
                 )
                     : Column(
@@ -224,7 +225,6 @@ class _PhaseDetailState extends State<PhaseDetail> {
                             ),
                             contentPadding: EdgeInsets.only(bottom: 9, top: 15),
                           ),
-                          SizedBox(height: 20,)
                         ],
                       ),
                 Expanded(
@@ -232,7 +232,6 @@ class _PhaseDetailState extends State<PhaseDetail> {
                     shrinkWrap: true,
                     physics: BouncingScrollPhysics(),
                     children: [
-                      _thereTask ? divider : Container(),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -264,22 +263,18 @@ class _PhaseDetailState extends State<PhaseDetail> {
                                           TextButton(
                                               onPressed: () async {
                                                 //Insert Task
-                                                for (int x = 0;
-                                                    x <
-                                                        _NewTaskState
-                                                            .taskFields.length;
-                                                    x++) {
-                                                  String task = _NewTaskState
-                                                      .taskFields[x]
-                                                      .taskController
-                                                      .text;
-                                                  if (task.isNotEmpty)
-                                                    widget.phase.allTasks
-                                                        .add(Task(task, false));
+                                                bool thereIsNewTask=false;
+                                                for (int x = 0; x < _NewTaskState.taskFields.length; x++) {
+                                                  String task = _NewTaskState.taskFields[x].taskController.text;
+                                                  if (task.isNotEmpty){
+                                                    widget.phase.allTasks.add(Task(task, false));
+                                                    thereIsNewTask=true;
+                                                  }
                                                 }
-
-                                                provider.updateProject(
-                                                    widget.project);
+                                                
+                                                if(thereIsNewTask) 
+                                                  provider.updateProject(widget.project);
+                                                
                                                 Navigator.pop(context);
                                               },
                                               child: Text(
@@ -367,10 +362,103 @@ class _PhaseDetailState extends State<PhaseDetail> {
                           ),
                           GestureDetector(
                             onTap: () {
+                              final workerNameController=TextEditingController();
+                              final workerPhoneNumberController=TextEditingController();
+                              final workerEmailController=TextEditingController();
+                              final workerJobController=TextEditingController();
+
+                              final sizedBox=SizedBox(height: 15,);
                               //New Workers
                               showDialog(
                                   context: context,
-                                  builder: (context) => AlertDialog());
+                                  barrierDismissible: false,
+                                  builder: (context) => AlertDialog(
+                                    backgroundColor: Theme.of(context)
+                                        .scaffoldBackgroundColor,
+                                    content: Container(
+                                      height: 400,
+                                      width: 250,
+                                      child: ListView(
+                                        physics: NeverScrollableScrollPhysics(),
+                                        children: [
+                                          Text(
+                                            'Assign new worker',
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w500
+                                            ),
+                                          ),
+                                          SizedBox(height: 25,),
+                                          TextField(
+                                            controller: workerNameController,
+                                            keyboardType: TextInputType.name,
+                                            maxLength: 20,
+                                            decoration: InputDecoration(
+                                              label: Text('Worker name*'),
+                                              prefixIcon: Icon(Icons.person)
+                                            ),
+                                          ),
+                                          sizedBox,
+                                          TextField(
+                                            controller: workerJobController,
+                                            keyboardType: TextInputType.text,
+                                            maxLength: 20,
+                                            decoration: InputDecoration(
+                                                label: Text('Worker job'),
+                                                prefixIcon: Icon(Icons.person)
+                                            ),
+                                          ),
+                                          sizedBox,
+                                          TextField(
+                                            controller: workerEmailController,
+                                            keyboardType: TextInputType.emailAddress,
+                                            decoration: InputDecoration(
+                                                label: Text('Email'),
+                                                prefixIcon: Icon(Icons.email)
+                                            ),
+                                          ),
+                                          sizedBox,
+                                          TextField(
+                                            controller: workerPhoneNumberController,
+                                            keyboardType: TextInputType.phone,
+                                            decoration: InputDecoration(
+                                                label: Text('Phone number'),
+                                                prefixIcon: Icon(Icons.call)
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                          child: Text(
+                                            'Cancel',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 17),
+                                          )),
+                                      TextButton(
+                                          onPressed: () async {
+                                            //Insert new worker
+                                            if(workerNameController.text.isNotEmpty){
+                                              Worker worker=Worker(workerNameController.text, workerPhoneNumberController.text, workerEmailController.text, workerJobController.text);
+                                              setState(() {
+                                                widget.phase.allWorkers.add(worker);
+                                              });
+                                              provider.updateProject(widget.project);
+                                            }
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text(
+                                            'Ok',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 17),
+                                          ))
+                                    ],
+                                  ));
                             },
                             child: Container(
                               child: Icon(
@@ -390,6 +478,7 @@ class _PhaseDetailState extends State<PhaseDetail> {
                           )
                         ],
                       ),
+                      SizedBox(height: 15,),
                       ListView.builder(
                         physics: NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
@@ -397,60 +486,110 @@ class _PhaseDetailState extends State<PhaseDetail> {
                         itemCount: widget.phase.allWorkers.length,
                         itemBuilder: (context, index) {
                           Worker person = widget.phase.allWorkers[index];
-                          return Container(
-                            padding: EdgeInsets.all(4),
-                            margin: EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                                color: Color(0xFFD3E9EC),
-                                borderRadius: BorderRadius.circular(10)),
-                            child: ListTile(
-                              title: Text(
-                                person.name ?? 'None',
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black),
-                              ),
-                              subtitle: Text(
-                                person.job ?? 'None',
-                                style: TextStyle(
-                                    fontSize: 16, color: Colors.black),
-                              ),
-                              trailing: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  person.email.toString().isNotEmpty
-                                      ? IconButton(
-                                          icon: Icon(
-                                            Icons.email,
-                                            color: Colors.black,
+                          return GestureDetector(
+                            onTap: (){
+                              showFlash(
+                                  context: context,
+                                  builder: (context, controller) {
+                                    final bool jobEmpty=person.job!.isNotEmpty;
+                                    final bool emailEmpty=person.email!.isNotEmpty;
+                                    final bool phoneEmpty=person.phoneNumber!.isNotEmpty;
+                                    final emptyTextSpan=TextSpan();
+                                    final style=TextStyle(fontSize: 17);
+                                    final boldStyle=TextStyle(fontSize: 17, fontWeight: FontWeight.bold);
+                                    return Flash.dialog(
+                                        controller: controller,
+                                        boxShadows: kElevationToShadow[4],
+                                        backgroundColor: Color(0xFF9BC1F3),
+                                        borderRadius: BorderRadius.circular(12),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(17.0),
+                                          child: Wrap(
+                                            children: [
+                                              RichText(
+                                                  text: TextSpan(children: [
+                                                    TextSpan(
+                                                      text: person.name! + '\n\n',
+                                                      style: TextStyle(
+                                                          fontSize: 20, fontWeight: FontWeight.w700),
+                                                    ),
+                                                    jobEmpty?TextSpan(
+                                                      text: 'Job: ',
+                                                      style: style,
+                                                    ):emptyTextSpan,
+                                                    jobEmpty?TextSpan(
+                                                      text: person.job! + '\n',
+                                                      style: boldStyle
+                                                    ):emptyTextSpan,
+                                                    emailEmpty?TextSpan(
+                                                      text: 'Email: ',
+                                                      style: style,
+                                                    ):emptyTextSpan,
+                                                    emailEmpty?TextSpan(
+                                                      text: person.email! + '\n',
+                                                      style: boldStyle
+                                                    ):emptyTextSpan,
+                                                    phoneEmpty?TextSpan(
+                                                      text: 'Phone number: ',
+                                                      style:style,
+                                                    ):emptyTextSpan,
+                                                    phoneEmpty?TextSpan(
+                                                        text: person.phoneNumber! + '\n',
+                                                        style: boldStyle
+                                                    ):emptyTextSpan
+                                                  ]))
+                                            ],
                                           ),
-                                          onPressed: () {
-                                            launch('mailto:${person.email}');
-                                          },
-                                        )
-                                      : Text(''),
-
-                                  person.phoneNumber.toString().isNotEmpty
-                                      ? IconButton(
-                                          icon: Icon(
-                                            Icons.call_outlined,
-                                            color: Colors.black,
-                                          ),
-                                          onPressed: () {
-                                            launch('tel:${person.phoneNumber}');
-                                          },
-                                        )
-                                      : Text(''),
-                                  //WhatsappIcon
-                                  // IconButton(
-                                  //   icon: Icon(
-                                  //     Icons.whats
-                                  //   ),
-                                  //   onPressed: (){},
-                                  // ),
-                                ],
+                                        ));
+                                  });
+                            },
+                            child: Container(
+                              margin: EdgeInsets.only(bottom: 15),
+                              padding: EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                  color: Color(0xFFD3E9EC),
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: ListTile(
+                                title: Text(
+                                  person.name ?? 'None',
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black),
+                                ),
+                                subtitle: person.name!.isNotEmpty?Text(
+                                  person.job ?? 'None',
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.black),
+                                ):Container(),
+                                trailing: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    person.email!.isNotEmpty
+                                        ? IconButton(
+                                            icon: Icon(
+                                              Icons.email,
+                                              color: Colors.black,
+                                            ),
+                                            onPressed: () {
+                                              launch('mailto:${person.email}');
+                                            },
+                                          )
+                                        : Text(''),
+                                    person.phoneNumber!.isNotEmpty
+                                        ? IconButton(
+                                            icon: Icon(
+                                              Icons.call_outlined,
+                                              color: Colors.black,
+                                            ),
+                                            onPressed: () {
+                                              launch('tel:${person.phoneNumber}');
+                                            },
+                                          )
+                                        : Text(''),
+                                  ],
+                                ),
                               ),
                             ),
                           );
@@ -557,7 +696,7 @@ class _PhaseDetailState extends State<PhaseDetail> {
             ),
           ),
           icon: AnimatedIcons.menu_close,
-          fabColor: Colors.grey[700],
+          fabColor: Color(0xff6168e7),
           iconColor: Colors.white,
           items: [
             HawkFabMenuItem(

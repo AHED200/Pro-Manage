@@ -20,7 +20,7 @@ class Phase{
     this._startAt=data['startAt'];
     this._description=data['description'];
     this._isDone=data['isDone'];
-    // this.allWorkers=data['workers'];
+    this.allWorkers=getWorkerFromDocument(data['workers']);
     this._allTasks=getTaskFromDocument(data['tasks']);
   }
 
@@ -94,6 +94,14 @@ class Phase{
     return tasks;
   }
 
+  List<Worker> getWorkerFromDocument(List<dynamic> data){
+    List<Worker> workers=[];
+    for(Map<String, dynamic> worker in data)
+      workers.add(Worker.fromSnapshot(worker));
+
+    return workers;
+  }
+
   Map<String, dynamic> toMap(){
     Map<String, dynamic> map={
       'phaseName':this._phaseName,
@@ -101,7 +109,10 @@ class Phase{
       'startAt':this._startAt,
       'dueDate':this._dueDate,
       'isDone':this.isDone,
-      'workers':[],
+      'workers':[
+        for(Worker worker in this.allWorkers)
+          worker.toMap()
+      ],
       'tasks': [
         for(Task task in this.allTasks)
           task.toMap()
