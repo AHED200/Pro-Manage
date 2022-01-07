@@ -115,13 +115,11 @@ class _PhaseFieldState extends State<PhaseField> {
                                           controller: controller,
                                           backgroundColor: Color(0xBB393939),
                                           borderRadius: BorderRadius.circular(10),
-                                          margin: EdgeInsets.symmetric(
-                                              horizontal: 15, vertical: 40),
+                                          margin: EdgeInsets.symmetric(horizontal: 15, vertical: 40),
                                           forwardAnimationCurve:
                                           Curves.easeOutBack,
                                           child: FlashBar(
-                                              content: Text(
-                                                  'You must choice start date and end date.')));
+                                              content: Text('You must choice start date and end date.')));
                                     });
                               }
                             },

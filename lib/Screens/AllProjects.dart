@@ -13,13 +13,15 @@ class AllProjects extends StatefulWidget {
 }
 
 class _AllProjectsState extends State<AllProjects> {
-  List<Project> allProjects=[];
+  List<Project> allProjects = [];
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    Size size = MediaQuery
+        .of(context)
+        .size;
     MaterialProvider provider = Provider.of<MaterialProvider>(context);
-    allProjects=provider.allProjects;
+    allProjects = provider.allProjects;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -58,6 +60,7 @@ class _AllProjectsState extends State<AllProjects> {
   }
 
   Widget getProjectSummary(Project project) {
+    project.getProjectProgress();
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -109,7 +112,7 @@ class _AllProjectsState extends State<AllProjects> {
                 currentValue: getProjectProgressPercent(project),
                 maxValue: 100,
                 size: 10,
-                progressColor: Color(0xFF00FFC2),
+                progressColor: getProgressColor(project.getProjectProgress()),
                 backgroundColor: Color(0xFFD0D5D4),
               ),
             ),
@@ -139,5 +142,14 @@ class _AllProjectsState extends State<AllProjects> {
         ),
       ),
     );
+  }
+  
+  Color getProgressColor(double number){
+    if(number>75)
+      return Color(0xFF0CD965);
+    else if(number>50)
+      return Color(0xFF35DBD5);
+    else
+      return Color(0xFFC759E0);
   }
 }

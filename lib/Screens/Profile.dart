@@ -1,12 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flash/flash.dart';
 import 'package:flutter/material.dart';
 import 'package:project_management/Helper/Provider.dart';
+import 'package:project_management/Helper/constant.dart';
 import 'package:project_management/Model/Phase.dart';
 import 'package:project_management/Model/Project.dart';
+import 'package:project_management/Screens/AuthScreens/SignUp.dart';
 import 'package:project_management/main.dart';
 import 'package:provider/provider.dart';
+import 'package:sliding_sheet/sliding_sheet.dart';
 import 'package:uuid/uuid.dart';
 
 class Profile extends StatelessWidget {
@@ -26,6 +30,16 @@ class Profile extends StatelessWidget {
   Widget build(BuildContext context) {
     MaterialProvider provider = Provider.of<MaterialProvider>(context);
     allProjects = provider.allProjects;
+
+    //For change user name
+    TextEditingController firstName =
+        TextEditingController(text: user!.firstName);
+    TextEditingController lastName =
+        TextEditingController(text: user!.lastName);
+    TextEditingController email = TextEditingController(text: user!.email);
+    TextEditingController password = TextEditingController();
+    bool emailValidate = false;
+
     return Scaffold(
       body: SingleChildScrollView(
         physics: BouncingScrollPhysics(),
@@ -104,6 +118,7 @@ class Profile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  //Full name
                   Padding(
                     padding:
                         const EdgeInsets.only(left: 12, top: 15, bottom: 8),
@@ -112,30 +127,368 @@ class Profile extends StatelessWidget {
                       style: titleStyle,
                     ),
                   ),
-                  Container(
-                    color: color,
-                    child: ListTile(
-                      title: Text('Full name', style: styleTitle),
-                      subtitle: Text(
-                        user!.firstName + ' ' + user!.lastName,
-                        style: styleSubTitle,
+                  GestureDetector(
+                    onTap: () {
+                      showSlidingBottomSheet(context,
+                          builder: (context) => SlidingSheetDialog(
+                              isDismissable: false,
+                              snapSpec: SnapSpec(snappings: [0.7, 0.7]),
+                              // controller: controller,
+                              cornerRadius: 20,
+                              border: Border.all(color: Colors.white54),
+                              builder: (context, state) {
+                                return Material(
+                                  child: Column(
+                                    children: [
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      Text(
+                                        'Change name',
+                                        style: titleStyle,
+                                      ),
+                                      SizedBox(height: 30),
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 10),
+                                        child: Column(
+                                          children: [
+                                            //First name
+                                            TextField(
+                                              controller: firstName,
+                                              decoration: InputDecoration(
+                                                  labelText: 'First name'),
+                                            ),
+
+                                            SizedBox(
+                                              height: 15,
+                                            ),
+
+                                            //Last name
+                                            TextField(
+                                              controller: lastName,
+                                              decoration: InputDecoration(
+                                                  labelText: 'Last name'),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(height: 30),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          //Cancel changes
+                                          GestureDetector(
+                                            onTap: () => Navigator.pop(context),
+                                            child: Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 35, vertical: 8),
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color: Colors.purple,
+                                                    width: 4),
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                              child: Text(
+                                                'Cancel',
+                                                style: TextStyle(
+                                                    fontSize: 19,
+                                                    fontWeight:
+                                                        FontWeight.w600),
+                                              ),
+                                            ),
+                                          ),
+                                          //Save changes
+                                          GestureDetector(
+                                            onTap: () async {
+                                              await provider.firestore
+                                                  .collection('users')
+                                                  .doc(user!.uid)
+                                                  .update({
+                                                'firstName': firstName.text,
+                                                'lastName': lastName.text,
+                                              });
+                                              user!.firstName=firstName.text;
+                                              user!.lastName=lastName.text;
+                                              Navigator.pop(context);
+                                            },
+                                            child: Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 35, vertical: 8),
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color: Colors.purple,
+                                                    width: 4),
+                                                color: Colors.purple,
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                              child: Text(
+                                                'Save',
+                                                style: TextStyle(
+                                                    fontSize: 19,
+                                                    fontWeight:
+                                                        FontWeight.w600),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 10)
+                                    ],
+                                  ),
+                                );
+                              }));
+                    },
+                    child: Container(
+                      color: color,
+                      child: ListTile(
+                        title: Text('Full name', style: styleTitle),
+                        subtitle: Text(
+                          user!.firstName + ' ' + user!.lastName,
+                          style: styleSubTitle,
+                        ),
+                        leading: Icon(Icons.account_circle_outlined),
                       ),
-                      leading: Icon(Icons.account_circle_outlined),
                     ),
                   ),
+                  //Email
                   Divider(
                     height: 0,
                     color: Colors.black,
                   ),
-                  Container(
-                    color: color,
-                    child: ListTile(
-                      title: Text('Email', style: styleTitle),
-                      subtitle: Text(
-                        user!.email,
-                        style: styleSubTitle,
+                  GestureDetector(
+                    onTap: () {
+                      showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) => AlertDialog(
+                                backgroundColor:
+                                    Theme.of(context).scaffoldBackgroundColor,
+                                content: LoginValidation(),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: Text(
+                                        'Cancel',
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 17),
+                                      )),
+                                  TextButton(
+                                      onPressed: () {
+                                        try {
+                                          if (_LoginValidationState
+                                                  .passwordController
+                                                  .text
+                                                  .isNotEmpty &&
+                                              _LoginValidationState
+                                                      .passwordController
+                                                      .text
+                                                      .length >=
+                                                  7) {
+                                            FirebaseAuth.instance.signInWithEmailAndPassword(
+                                                    email: user!.email,
+                                                    password:
+                                                        _LoginValidationState
+                                                            .passwordController
+                                                            .text)
+                                                .then((auth) {
+                                              if (auth.user!.uid.length > 0) {
+                                                _LoginValidationState.passwordController.clear();
+                                                Navigator.pop(context);
+                                                showSlidingBottomSheet(context, builder: (context) => SlidingSheetDialog(
+                                                            isDismissable:
+                                                                false,
+                                                            snapSpec: SnapSpec(
+                                                                snappings: [
+                                                                  0.7,
+                                                                  0.7
+                                                                ]),
+                                                            // controller: controller,
+                                                            cornerRadius: 20,
+                                                            border: Border.all(
+                                                                color: Colors
+                                                                    .white54),
+                                                            builder: (context,
+                                                                state) {
+                                                              return Material(
+                                                                child: Column(
+                                                                  children: [
+                                                                    SizedBox(
+                                                                      height:
+                                                                          20,
+                                                                    ),
+                                                                    Text(
+                                                                      'Change email',
+                                                                      style:
+                                                                          titleStyle,
+                                                                    ),
+                                                                    SizedBox(
+                                                                        height:
+                                                                            30),
+                                                                    Padding(
+                                                                      padding: EdgeInsets.symmetric(
+                                                                          horizontal:
+                                                                              10),
+                                                                      child:
+                                                                          TextFormField(
+                                                                        controller:
+                                                                            email,
+                                                                        textInputAction:
+                                                                            TextInputAction.done,
+                                                                        keyboardType:
+                                                                            TextInputType.emailAddress,
+                                                                        validator:
+                                                                            (x) {
+                                                                          emailValidate =
+                                                                              RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email.text);
+                                                                          if (x!
+                                                                              .isEmpty) {
+                                                                            return 'Email filed is empty.';
+                                                                          } else if (!emailValidate)
+                                                                            return 'Email is\'t validate';
+                                                                        },
+                                                                        decoration:
+                                                                            InputDecoration(
+                                                                          labelText:
+                                                                              'Email',
+                                                                          prefixIcon:
+                                                                              Icon(Icons.email),
+                                                                          floatingLabelBehavior:
+                                                                              FloatingLabelBehavior.auto,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    SizedBox(
+                                                                        height:
+                                                                            30),
+                                                                    Row(
+                                                                      mainAxisAlignment:
+                                                                          MainAxisAlignment
+                                                                              .spaceEvenly,
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .center,
+                                                                      children: [
+                                                                        //Cancel changes
+                                                                        GestureDetector(
+                                                                          onTap: () =>
+                                                                              Navigator.pop(context),
+                                                                          child:
+                                                                              Container(
+                                                                            padding:
+                                                                                EdgeInsets.symmetric(horizontal: 35, vertical: 8),
+                                                                            decoration:
+                                                                                BoxDecoration(
+                                                                              border: Border.all(color: Colors.purple, width: 4),
+                                                                              borderRadius: BorderRadius.circular(10),
+                                                                            ),
+                                                                            child:
+                                                                                Text(
+                                                                              'Cancel',
+                                                                              style: TextStyle(fontSize: 19, fontWeight: FontWeight.w600),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        //Save changes
+                                                                        GestureDetector(
+                                                                          onTap:
+                                                                              () async {
+                                                                            emailValidate =
+                                                                                RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email.text);
+                                                                            if (emailValidate) {
+                                                                              await provider.firestore.collection('users').doc(user!.uid).update({
+                                                                                'email': email.text
+                                                                              });
+                                                                              await FirebaseAuth.instance.currentUser!.updateEmail(email.text);
+                                                                              user!.email = email.text;
+                                                                              Navigator.pop(context);
+                                                                            }
+                                                                          },
+                                                                          child:
+                                                                              Container(
+                                                                            padding:
+                                                                                EdgeInsets.symmetric(horizontal: 35, vertical: 8),
+                                                                            decoration:
+                                                                                BoxDecoration(
+                                                                              border: Border.all(color: Colors.purple, width: 4),
+                                                                              color: Colors.purple,
+                                                                              borderRadius: BorderRadius.circular(10),
+                                                                            ),
+                                                                            child:
+                                                                                Text(
+                                                                              'Save',
+                                                                              style: TextStyle(fontSize: 19, fontWeight: FontWeight.w600),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                    SizedBox(
+                                                                        height:
+                                                                            10)
+                                                                  ],
+                                                                ),
+                                                              );
+                                                            }));
+                                              }
+                                            });
+                                          } else {
+                                            throw new Exception(
+                                                'Password filed is empty');
+                                          }
+                                        } catch (error) {
+                                          showFlash(
+                                              context: context,
+                                              duration: Duration(seconds: 4),
+                                              builder: (context, controller) =>
+                                                  Flash.bar(
+                                                      controller: controller,
+                                                      backgroundColor:
+                                                          Color(0xF0393939),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                      margin:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 15,
+                                                              vertical: 40),
+                                                      forwardAnimationCurve:
+                                                          Curves.easeOutBack,
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child: Text(
+                                                            'Password is\'t correct, try again',
+                                                            style: TextStyle(
+                                                              fontSize: 18,
+                                                            )),
+                                                      )));
+                                        }
+                                      },
+                                      child: Text(
+                                        'Ok',
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 17),
+                                      ))
+                                ],
+                              ));
+                    },
+                    child: Container(
+                      color: color,
+                      child: ListTile(
+                        title: Text('Email', style: styleTitle),
+                        subtitle: Text(
+                          user!.email,
+                          style: styleSubTitle,
+                        ),
+                        leading: Icon(Icons.email),
                       ),
-                      leading: Icon(Icons.email),
                     ),
                   ),
                 ],
@@ -290,5 +643,86 @@ class Profile extends StatelessWidget {
       if (project.isDone) count++;
     }
     return count.toString();
+  }
+}
+
+class LoginValidation extends StatefulWidget {
+  @override
+  State<LoginValidation> createState() => _LoginValidationState();
+}
+
+class _LoginValidationState extends State<LoginValidation> {
+  static final TextEditingController passwordController =
+      TextEditingController();
+  bool _obscureText = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(children: [
+      Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Password validation',
+            style: TextStyle(
+              fontSize: 25,
+            ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Text(
+            'Email',
+            style: TextStyle(
+              fontSize: 18,
+            ),
+          ),
+          // SizedBox(height: 5,),
+          Text(
+            user!.email,
+            style: TextStyle(
+              fontSize: 22,
+            ),
+          ),
+          SizedBox(
+            height: 15,
+          ),
+          SizedBox(
+            height: 90,
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 15),
+              child: TextFormField(
+                controller: passwordController,
+                textInputAction: TextInputAction.done,
+                keyboardType: TextInputType.visiblePassword,
+                obscureText: _obscureText,
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  floatingLabelBehavior: FloatingLabelBehavior.auto,
+                  focusColor: Colors.black,
+                  prefixIcon: Icon(Icons.lock_outlined),
+                  suffix: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _obscureText = !_obscureText;
+                      });
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(5),
+                      child: Icon(
+                        Icons.visibility_outlined,
+                        size: 25,
+                        color: _obscureText ? Colors.white : Constant.purple,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
+    ]);
   }
 }

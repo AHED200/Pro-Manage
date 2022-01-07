@@ -98,4 +98,15 @@ class Project{
     }
     return notes;
   }
+
+  double getProjectProgress(){
+    int donePhases=0;
+    int projectLength=_allPhases.length;
+
+    for(int x=0; x<projectLength; x++){
+      if(_allPhases[x].isDone)
+        donePhases++;
+    }
+    return ((donePhases/projectLength)*100);
+  }
 }

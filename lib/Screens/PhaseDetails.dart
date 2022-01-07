@@ -699,30 +699,55 @@ class _PhaseDetailState extends State<PhaseDetail> {
           fabColor: Color(0xff6168e7),
           iconColor: Colors.white,
           items: [
-            HawkFabMenuItem(
-              label: 'Finish phase',
-              ontap: () {
-                CoolAlert.show(
-                  context: context,
-                  type: CoolAlertType.confirm,
-                  text: 'Are you sure for finishing this phase.',
-                  confirmBtnText: 'Yes',
-                  onConfirmBtnTap: () {
-                    setState(() {
-                      widget.phase.finishPhase();
-                    });
-                    provider.updateProject(widget.project);
-                    Navigator.pop(context);
+            widget.phase.isDone?
+                HawkFabMenuItem(
+                  label: 'Unfinished phase',
+                  ontap: () {
+                    CoolAlert.show(
+                      context: context,
+                      type: CoolAlertType.confirm,
+                      text: 'Are you sure for unfinished this phase.',
+                      confirmBtnText: 'Yes',
+                      onConfirmBtnTap: () {
+                        setState(() {
+                          widget.phase.isDone=false;
+                        });
+                        provider.updateProject(widget.project);
+                        Navigator.pop(context);
+                      },
+                      cancelBtnText: 'No, cancel',
+                    );
                   },
-                  cancelBtnText: 'No, cancel',
-                );
-              },
-              color: Colors.green[400],
-              icon: Icon(
-                Icons.check_outlined,
-                color: Colors.white,
-              ),
-            ),
+                  color: Color(0xFFE027D1),
+                  icon: Icon(
+                    Icons.cancel_outlined,
+                    color: Colors.white,
+                  ),
+                ):
+                HawkFabMenuItem(
+                  label: 'Finish phase',
+                  ontap: () {
+                    CoolAlert.show(
+                      context: context,
+                      type: CoolAlertType.confirm,
+                      text: 'Are you sure for finishing this phase.',
+                      confirmBtnText: 'Yes',
+                      onConfirmBtnTap: () {
+                        setState(() {
+                          widget.phase.finishPhase();
+                        });
+                        provider.updateProject(widget.project);
+                        Navigator.pop(context);
+                      },
+                      cancelBtnText: 'No, cancel',
+                    );
+                  },
+                  color: Colors.green[400],
+                  icon: Icon(
+                    Icons.check_outlined,
+                    color: Colors.white,
+                  ),
+                ),
             HawkFabMenuItem(
               label: 'Delete phase',
               ontap: () {

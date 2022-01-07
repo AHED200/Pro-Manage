@@ -228,6 +228,7 @@ class _SignUpState extends State<SignUp> {
         await auth.createUserWithEmailAndPassword(
             email: emailController.text, password: passwordController.text);
         final String uid = auth.currentUser!.uid;
+        final String projectRepository=Uuid().v4();
 
         final fireStore = FirebaseFirestore.instance;
         await fireStore.collection('users').doc(uid).set({
@@ -236,9 +237,10 @@ class _SignUpState extends State<SignUp> {
           'lastName': lastNameController.text,
           'email': emailController.text,
           'createdAt': Timestamp.now(),
-          'projectRepositoryId': Uuid().v4(),
+          'projectRepositoryId': projectRepository,
           'projectsId':[],
         });
+        await fireStore.collection('projectRepository').doc(projectRepository).set({});
         await fireStore
             .collection('users')
             .doc(uid)

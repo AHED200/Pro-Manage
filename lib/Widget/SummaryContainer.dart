@@ -100,8 +100,8 @@ class SummaryContainer extends StatelessWidget {
             ),
             Container(
               height: 115,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   TrackContainer(
                       text: 'Completed',
