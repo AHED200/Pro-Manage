@@ -7,6 +7,7 @@ import 'package:project_management/Helper/Provider.dart';
 import 'package:project_management/Helper/constant.dart';
 import 'package:project_management/Model/Phase.dart';
 import 'package:project_management/Model/Project.dart';
+import 'package:project_management/Screens/AuthScreens/SignIn.dart';
 import 'package:project_management/Screens/AuthScreens/SignUp.dart';
 import 'package:project_management/main.dart';
 import 'package:provider/provider.dart';
@@ -212,8 +213,8 @@ class Profile extends StatelessWidget {
                                                 'firstName': firstName.text,
                                                 'lastName': lastName.text,
                                               });
-                                              user!.firstName=firstName.text;
-                                              user!.lastName=lastName.text;
+                                              user!.firstName = firstName.text;
+                                              user!.lastName = lastName.text;
                                               Navigator.pop(context);
                                             },
                                             child: Container(
@@ -290,7 +291,8 @@ class Profile extends StatelessWidget {
                                                       .text
                                                       .length >=
                                                   7) {
-                                            FirebaseAuth.instance.signInWithEmailAndPassword(
+                                            FirebaseAuth.instance
+                                                .signInWithEmailAndPassword(
                                                     email: user!.email,
                                                     password:
                                                         _LoginValidationState
@@ -298,9 +300,13 @@ class Profile extends StatelessWidget {
                                                             .text)
                                                 .then((auth) {
                                               if (auth.user!.uid.length > 0) {
-                                                _LoginValidationState.passwordController.clear();
+                                                _LoginValidationState
+                                                    .passwordController
+                                                    .clear();
                                                 Navigator.pop(context);
-                                                showSlidingBottomSheet(context, builder: (context) => SlidingSheetDialog(
+                                                showSlidingBottomSheet(context,
+                                                    builder: (context) =>
+                                                        SlidingSheetDialog(
                                                             isDismissable:
                                                                 false,
                                                             snapSpec: SnapSpec(
@@ -522,33 +528,110 @@ class Profile extends StatelessWidget {
                     color: Colors.black,
                     height: 0,
                   ),
-                  Container(
-                    color: color,
-                    child: ListTile(
-                      title: Text(
-                        'Change password',
-                        style: styleSubTitle,
+                  //Change password
+                  GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                      color: color,
+                      child: ListTile(
+                        title: Text(
+                          'Change password',
+                          style: styleSubTitle,
+                        ),
+                        leading: Icon(Icons.lock_outlined),
                       ),
-                      leading: Icon(Icons.lock_outlined),
                     ),
                   ),
                   Divider(
                     color: Colors.black,
                     height: 0,
                   ),
-                  Container(
-                    color: color,
-                    child: ListTile(
-                      title: Text(
-                        'Delete account',
-                        style: TextStyle(
-                            color: red,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700),
-                      ),
-                      leading: Icon(
-                        Icons.close_outlined,
-                        color: red,
+                  //Delete user account
+                  GestureDetector(
+                    onTap: () {
+                      CoolAlert.show(
+                          context: context,
+                          type: CoolAlertType.warning,
+                          title: 'Are you sure for deleting your account?',
+                          showCancelBtn: true,
+                          cancelBtnText: 'No',
+                          confirmBtnText: 'Yes',
+                          onConfirmBtnTap: () {
+                            Navigator.pop(context);
+                            showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                      backgroundColor: Theme.of(context)
+                                          .scaffoldBackgroundColor,
+                                      title: Text('Delete account'),
+                                      content: SizedBox(
+                                        height: 150,
+                                        width: 250,
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                                'Please enter your password to confirm the deletion.'),
+                                            SizedBox(
+                                              height: 90,
+                                              child: Padding(
+                                                padding:
+                                                    EdgeInsets.only(top: 15),
+                                                child: TextFormField(
+                                                  controller: password,
+                                                  textInputAction:
+                                                      TextInputAction.done,
+                                                  keyboardType: TextInputType
+                                                      .visiblePassword,
+                                                  obscureText: false,
+                                                  decoration: InputDecoration(
+                                                    labelText: 'Password',
+                                                    floatingLabelBehavior:
+                                                        FloatingLabelBehavior
+                                                            .auto,
+                                                    focusColor: Colors.black,
+                                                    prefixIcon: Icon(
+                                                        Icons.lock_outlined),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                            onPressed: () async{
+                                              await FirebaseFirestore.instance.collection('projectRepository').doc(user!.projectRepositoryId).delete();
+                                              await FirebaseFirestore.instance.collection('users').doc(user!.uid).delete();
+                                              await FirebaseAuth.instance.currentUser!.delete();
+                                              Navigator.pushReplacement(context, MaterialPageRoute(builder:(context)=>SignIn()));
+                                            },
+                                            child: Text(
+                                              'Delete account',
+                                              style: TextStyle(
+                                                  color: Colors.red,
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.w600),
+                                            ))
+                                      ],
+                                    ));
+                          },
+                          onCancelBtnTap: () => Navigator.pop(context));
+                    },
+                    child: Container(
+                      color: color,
+                      child: ListTile(
+                        title: Text(
+                          'Delete account',
+                          style: TextStyle(
+                              color: red,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700),
+                        ),
+                        leading: Icon(
+                          Icons.close_outlined,
+                          color: red,
+                        ),
                       ),
                     ),
                   ),
