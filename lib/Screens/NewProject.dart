@@ -12,6 +12,7 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:uuid/uuid.dart';
 import 'package:project_management/main.dart';
 
+
 class NewProject extends StatefulWidget {
   @override
   State<NewProject> createState() => _NewProjectState();
@@ -201,19 +202,40 @@ class _NewProjectState extends State<NewProject> {
                   child: Wrap(
                     children: [
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
                             'Project phases',
                             style: TextStyle(
                                 fontSize: 17, fontWeight: FontWeight.w600),
                           ),
-                          IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  phaseFields.add(PhaseField());
-                                });
-                              },
-                              icon: Icon(Icons.add))
+                          Container(
+                            margin: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Color(0xff4b556d),
+                              borderRadius: BorderRadius.all(Radius.circular(50))
+                            ),
+                            child: Row(
+                              children: [
+                                IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        phaseFields.add(PhaseField());
+                                      });
+                                    },
+                                    icon: Icon(Icons.add)),
+                                Divider(color: Colors.red,),
+                                IconButton(
+                                    onPressed: () {
+                                      if (phaseFields.length>1)
+                                        setState(() {
+                                          phaseFields.removeLast();
+                                        });
+                                    },
+                                    icon: Icon(Icons.remove_outlined)),
+                              ],
+                            ),
+                          )
                         ],
                       ),
                       for (int x = 0; x < phaseFields.length; x++)

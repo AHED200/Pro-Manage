@@ -8,7 +8,6 @@ import 'package:project_management/Helper/constant.dart';
 import 'package:project_management/Model/Phase.dart';
 import 'package:project_management/Model/Project.dart';
 import 'package:project_management/Screens/AuthScreens/SignIn.dart';
-import 'package:project_management/Screens/AuthScreens/SignUp.dart';
 import 'package:project_management/main.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
@@ -257,11 +256,11 @@ class Profile extends StatelessWidget {
                       ),
                     ),
                   ),
-                  //Email
                   Divider(
                     height: 0,
                     color: Colors.black,
                   ),
+                  //Email change
                   GestureDetector(
                     onTap: () {
                       showDialog(
@@ -270,7 +269,7 @@ class Profile extends StatelessWidget {
                           builder: (context) => AlertDialog(
                                 backgroundColor:
                                     Theme.of(context).scaffoldBackgroundColor,
-                                content: LoginValidation(),
+                                content: LoginValidation(true),
                                 actions: [
                                   TextButton(
                                       onPressed: () => Navigator.pop(context),
@@ -298,6 +297,45 @@ class Profile extends StatelessWidget {
                                                         _LoginValidationState
                                                             .passwordController
                                                             .text)
+                                                .catchError(
+                                                    (error, stackTrace) => {
+                                                          showFlash(
+                                                              context: context,
+                                                              duration:
+                                                                  Duration(
+                                                                      seconds:
+                                                                          4),
+                                                              builder: (context,
+                                                                      controller) =>
+                                                                  Flash.bar(
+                                                                      controller:
+                                                                          controller,
+                                                                      backgroundColor:
+                                                                          Color(
+                                                                              0xF0393939),
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              10),
+                                                                      margin: EdgeInsets.symmetric(
+                                                                          horizontal:
+                                                                              15,
+                                                                          vertical:
+                                                                              40),
+                                                                      forwardAnimationCurve:
+                                                                          Curves
+                                                                              .easeOutBack,
+                                                                      child:
+                                                                          Padding(
+                                                                        padding:
+                                                                            const EdgeInsets.all(8.0),
+                                                                        child: Text(
+                                                                            'Password is\'t correct, try again',
+                                                                            style:
+                                                                                TextStyle(
+                                                                              fontSize: 18,
+                                                                            )),
+                                                                      )))
+                                                        })
                                                 .then((auth) {
                                               if (auth.user!.uid.length > 0) {
                                                 _LoginValidationState
@@ -413,6 +451,12 @@ class Profile extends StatelessWidget {
                                                                               await FirebaseAuth.instance.currentUser!.updateEmail(email.text);
                                                                               user!.email = email.text;
                                                                               Navigator.pop(context);
+                                                                              CoolAlert.show(
+                                                                                context: context,
+                                                                                type: CoolAlertType.success,
+                                                                                text: 'Your email is changed successfully.',
+                                                                                title: 'Change is successfully!',
+                                                                              );
                                                                             }
                                                                           },
                                                                           child:
@@ -444,8 +488,7 @@ class Profile extends StatelessWidget {
                                               }
                                             });
                                           } else {
-                                            throw new Exception(
-                                                'Password filed is empty');
+                                            throw new Exception('Password filed is empty');
                                           }
                                         } catch (error) {
                                           showFlash(
@@ -530,7 +573,234 @@ class Profile extends StatelessWidget {
                   ),
                   //Change password
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) => AlertDialog(
+                            backgroundColor:
+                            Theme.of(context).scaffoldBackgroundColor,
+                            content: LoginValidation(false),
+                            actions: [
+                              TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: Text(
+                                    'Cancel',
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 17),
+                                  )),
+                              TextButton(
+                                  onPressed: () {
+                                    try {
+                                      if (_LoginValidationState.passwordController.text.isNotEmpty && _LoginValidationState.passwordController.text.length >= 7) {
+                                        FirebaseAuth.instance.signInWithEmailAndPassword(
+                                            email: user!.email,
+                                            password:
+                                            _LoginValidationState.passwordController.text)
+                                            .catchError(
+                                                (error, stackTrace) => {
+                                              showFlash(
+                                                  context: context,
+                                                  duration:
+                                                  Duration(
+                                                      seconds:
+                                                      4),
+                                                  builder: (context,
+                                                      controller) =>
+                                                      Flash.bar(
+                                                          controller:
+                                                          controller,
+                                                          backgroundColor:
+                                                          Color(
+                                                              0xF0393939),
+                                                          borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                          margin: EdgeInsets.symmetric(
+                                                              horizontal:
+                                                              15,
+                                                              vertical:
+                                                              40),
+                                                          forwardAnimationCurve:
+                                                          Curves
+                                                              .easeOutBack,
+                                                          child:
+                                                          Padding(
+                                                            padding:
+                                                            const EdgeInsets.all(8.0),
+                                                            child: Text(
+                                                                'Password is\'t correct, try again',
+                                                                style:
+                                                                TextStyle(
+                                                                  fontSize: 18,
+                                                                )),
+                                                          )))
+                                            })
+                                            .then((auth) {
+                                          if (auth.user!.uid.length > 0) {
+                                            _LoginValidationState
+                                                .passwordController
+                                                .clear();
+                                            Navigator.pop(context);
+                                            showSlidingBottomSheet(context,
+                                                builder: (context) =>
+                                                    SlidingSheetDialog(
+                                                        isDismissable: false,
+                                                        snapSpec: SnapSpec(
+                                                            snappings: [
+                                                              0.7,
+                                                              0.7
+                                                            ]),
+                                                        // controller: controller,
+                                                        cornerRadius: 20,
+                                                        border: Border.all(
+                                                            color: Colors
+                                                                .white54),
+                                                        builder: (context,
+                                                            state) {
+                                                          return Material(
+                                                            child: Column(
+                                                              children: [
+                                                                SizedBox(
+                                                                  height:
+                                                                  20,
+                                                                ),
+                                                                Text(
+                                                                  'Change password',
+                                                                  style:
+                                                                  titleStyle,
+                                                                ),
+                                                                SizedBox(
+                                                                    height:
+                                                                    30),
+                                                                Padding(
+                                                                  padding: EdgeInsets.symmetric(
+                                                                      horizontal:
+                                                                      10),
+                                                                  child:
+                                                                  TextFormField(
+                                                                    controller: password,
+                                                                    textInputAction: TextInputAction.done,
+                                                                    keyboardType: TextInputType.visiblePassword,
+                                                                    validator: (x) {
+                                                                      if (x!.isEmpty) {
+                                                                        return 'Password filed is empty.';
+                                                                      }
+                                                                    },
+                                                                    decoration: InputDecoration(
+                                                                      labelText: 'New password',
+                                                                      prefixIcon: Icon(Icons.lock_outlined),
+                                                                      floatingLabelBehavior: FloatingLabelBehavior.auto,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                SizedBox(height: 30),
+                                                                Row(
+                                                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                                                  children: [
+                                                                    //Cancel changes
+                                                                    GestureDetector(
+                                                                      onTap: () =>
+                                                                          Navigator.pop(context),
+                                                                      child:
+                                                                      Container(
+                                                                        padding:
+                                                                        EdgeInsets.symmetric(horizontal: 35, vertical: 8),
+                                                                        decoration:
+                                                                        BoxDecoration(
+                                                                          border: Border.all(color: Colors.purple, width: 4),
+                                                                          borderRadius: BorderRadius.circular(10),
+                                                                        ),
+                                                                        child:
+                                                                        Text(
+                                                                          'Cancel',
+                                                                          style: TextStyle(fontSize: 19, fontWeight: FontWeight.w600),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    //Save changes
+                                                                    GestureDetector(
+                                                                      onTap: () async {
+                                                                        await FirebaseAuth.instance.currentUser!.updatePassword(password.text);
+                                                                        Navigator.pop(context);
+                                                                        CoolAlert.show(
+                                                                          context: context,
+                                                                          type: CoolAlertType.success,
+                                                                          text: 'Your password is changed successfully.',
+                                                                          title: 'Change is successfully!',
+                                                                        );
+                                                                      },
+                                                                      child:
+                                                                      Container(
+                                                                        padding:
+                                                                        EdgeInsets.symmetric(horizontal: 35, vertical: 8),
+                                                                        decoration:
+                                                                        BoxDecoration(
+                                                                          border: Border.all(color: Colors.purple, width: 4),
+                                                                          color: Colors.purple,
+                                                                          borderRadius: BorderRadius.circular(10),
+                                                                        ),
+                                                                        child:
+                                                                        Text(
+                                                                          'Save',
+                                                                          style: TextStyle(fontSize: 19, fontWeight: FontWeight.w600),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                SizedBox(
+                                                                    height:
+                                                                    10)
+                                                              ],
+                                                            ),
+                                                          );
+                                                        }));
+                                          }
+                                        });
+                                      } else {
+                                        throw new Exception(
+                                            'Password filed is empty');
+                                      }
+                                    } catch (error) {
+                                      showFlash(
+                                          context: context,
+                                          duration: Duration(seconds: 4),
+                                          builder: (context, controller) =>
+                                              Flash.bar(
+                                                  controller: controller,
+                                                  backgroundColor:
+                                                  Color(0xF0393939),
+                                                  borderRadius:
+                                                  BorderRadius.circular(
+                                                      10),
+                                                  margin:
+                                                  EdgeInsets.symmetric(
+                                                      horizontal: 15,
+                                                      vertical: 40),
+                                                  forwardAnimationCurve:
+                                                  Curves.easeOutBack,
+                                                  child: Padding(
+                                                    padding:
+                                                    const EdgeInsets
+                                                        .all(8.0),
+                                                    child: Text(
+                                                        'Password is\'t correct, try again',
+                                                        style: TextStyle(
+                                                          fontSize: 18,
+                                                        )),
+                                                  )));
+                                    }
+                                  },
+                                  child: Text(
+                                    'Ok',
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 17),
+                                  ))
+                            ],
+                          ));
+                    },
                     child: Container(
                       color: color,
                       child: ListTile(
@@ -600,11 +870,25 @@ class Profile extends StatelessWidget {
                                       ),
                                       actions: [
                                         TextButton(
-                                            onPressed: () async{
-                                              await FirebaseFirestore.instance.collection('projectRepository').doc(user!.projectRepositoryId).delete();
-                                              await FirebaseFirestore.instance.collection('users').doc(user!.uid).delete();
-                                              await FirebaseAuth.instance.currentUser!.delete();
-                                              Navigator.pushReplacement(context, MaterialPageRoute(builder:(context)=>SignIn()));
+                                            onPressed: () async {
+                                              await FirebaseFirestore.instance
+                                                  .collection(
+                                                      'projectRepository')
+                                                  .doc(
+                                                      user!.projectRepositoryId)
+                                                  .delete();
+                                              await FirebaseFirestore.instance
+                                                  .collection('users')
+                                                  .doc(user!.uid)
+                                                  .delete();
+                                              await FirebaseAuth
+                                                  .instance.currentUser!
+                                                  .delete();
+                                              Navigator.pushReplacement(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          SignIn()));
                                             },
                                             child: Text(
                                               'Delete account',
@@ -730,6 +1014,9 @@ class Profile extends StatelessWidget {
 }
 
 class LoginValidation extends StatefulWidget {
+  late bool changeEmail;
+  LoginValidation(this.changeEmail);
+
   @override
   State<LoginValidation> createState() => _LoginValidationState();
 }
@@ -738,6 +1025,13 @@ class _LoginValidationState extends State<LoginValidation> {
   static final TextEditingController passwordController =
       TextEditingController();
   bool _obscureText = true;
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    passwordController.clear();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -781,7 +1075,7 @@ class _LoginValidationState extends State<LoginValidation> {
                 keyboardType: TextInputType.visiblePassword,
                 obscureText: _obscureText,
                 decoration: InputDecoration(
-                  labelText: 'Password',
+                  labelText: widget.changeEmail?'Password':'Old password',
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
                   focusColor: Colors.black,
                   prefixIcon: Icon(Icons.lock_outlined),
