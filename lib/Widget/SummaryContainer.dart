@@ -35,10 +35,9 @@ class SummaryContainer extends StatelessWidget {
         Navigator.push(context, MaterialPageRoute(builder: (context)=>ProjectDetail(project: project)));
       },
       child: Container(
-        width: size.width,
-        height: 280,
-        padding: EdgeInsets.all(20),
-        margin: EdgeInsets.only(left: 7, right: 7),
+        width: size.width-20,
+        padding: EdgeInsets.symmetric(horizontal: 15, vertical: 18),
+        margin: EdgeInsets.only(left: 7, right: 7, top: 8, bottom: 10),
         decoration: BoxDecoration(
             boxShadow: [
               BoxShadow(

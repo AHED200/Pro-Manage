@@ -37,6 +37,7 @@ class _AllTasksState extends State<AllPhases> {
           Expanded(
             child: SingleChildScrollView(
               physics: BouncingScrollPhysics(),
+              padding: EdgeInsets.only(bottom: 65),
               child: Padding(
                   padding: const EdgeInsets.only(left: 10, top: 8, right: 10),
                   child:  ListView.builder(

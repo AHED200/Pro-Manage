@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:project_management/Model/Note.dart';
 import 'package:project_management/Model/Phase.dart';
 import 'package:project_management/Model/Project.dart';
 import 'package:project_management/Model/Task.dart';
@@ -51,14 +50,7 @@ class MaterialProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void insertNewPhase(
-      String phaseName,
-      String phaseDescription,
-      String startDate,
-      String dueDate,
-      int index,
-      List<Task> tasks,
-      Project project) async {
+  void insertNewPhase(String phaseName, String phaseDescription, String startDate, String dueDate, int index, List<Task> tasks, Project project) async{
     Phase newPhase = Phase.withTask(
         phaseName, phaseDescription, startDate, dueDate, false, tasks);
     project.allPhases.insert(index - 1, newPhase);

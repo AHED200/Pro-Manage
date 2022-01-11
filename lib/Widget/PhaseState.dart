@@ -112,21 +112,13 @@ class _PhaseStateState extends State<PhaseState> {
                                         thickness: 2,
                                         endIndent: 10,
                                       ),
-                                      IconButton(
-                                        icon: Icon(stateIcon(widget
-                                            .project
-                                            .allPhases[index]
-                                            .allTasks[x]
-                                            .isDone)),
-                                        onPressed: () {
-                                          setState(() {
-                                            widget.project.allPhases[index].changeTaskState(widget.project.allPhases[index].allTasks[x]);
-                                          });
-                                        },
-                                        color: widget.project.allPhases[index]
-                                                .allTasks[x].isDone
-                                            ? Color(0xFF00FF3C)
-                                            : Color(0xFFE96A6A),
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 9),
+                                        child: Icon(stateIcon(widget.project.allPhases[index].allTasks[x].isDone),
+                                          color: widget.project.allPhases[index].allTasks[x].isDone
+                                              ? Color(0xFF00FF3C)
+                                              : Color(0xFFE96A6A),
+                                        ),
                                       )
                                     ],
                                   ),

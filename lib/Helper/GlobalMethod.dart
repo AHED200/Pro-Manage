@@ -32,6 +32,7 @@ List<Phase> getUncompletedPhases(List<Project> projects) {
       }
     }
   }
+  allPhases.sort((a, b) => reminderDay(a.dueDate).compareTo(b.dueDate));
   return allPhases;
 }
 

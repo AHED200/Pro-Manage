@@ -3,6 +3,8 @@ import 'package:cool_alert/cool_alert.dart';
 import 'package:flash/flash.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:focused_menu/focused_menu.dart';
+import 'package:focused_menu/modals.dart';
 import 'package:hawk_fab_menu/hawk_fab_menu.dart';
 import 'package:intl/intl.dart';
 import 'package:project_management/Helper/GlobalMethod.dart';
@@ -196,12 +198,12 @@ class _PhaseDetailState extends State<PhaseDetail> {
                     : Column(
                         children: [
                           ListTile(
-                            title: Text(
+                            title: SelectableText(
                               widget.phase.phaseName,
                               style: TextStyle(
                                   fontSize: 24, fontWeight: FontWeight.w600),
                             ),
-                            subtitle: Text(
+                            subtitle: SelectableText(
                               'Due date:  ' + widget.phase.dueDate,
                               style: TextStyle(
                                   fontSize: 20, fontWeight: FontWeight.w500),
@@ -305,49 +307,97 @@ class _PhaseDetailState extends State<PhaseDetail> {
                         ],
                       ),
                       SizedBox(height: 10),
+                      //All tasks builder
                       ListView.builder(
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
                         itemCount: widget.phase.allTasks.length,
                         itemBuilder: (context, x) {
-                          return Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: widget.phase.allTasks[x].isDone
-                                    ? Color(0xFF80BA8C)
-                                    : Color(0xFFD9D4FF)),
-                            margin: EdgeInsets.only(bottom: 15),
-                            padding: EdgeInsets.all(5),
-                            child: ListTile(
-                                title: Text(
-                                  widget.phase.allTasks[x].taskName,
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w600,
-                                      decoration:
-                                          widget.phase.allTasks[x].isDone
-                                              ? TextDecoration.lineThrough
-                                              : null),
-                                ),
-                                trailing: IconButton(
-                                  icon: widget.phase.allTasks[x].isDone
-                                      ? Icon(
-                                          Icons.check_circle_outlined,
-                                          size: 40,
-                                          color: Color(0xFF005F29),
-                                        )
-                                      : Icon(
-                                          Icons.circle_outlined,
-                                          size: 40,
-                                          color: Color(0xFF717171),
-                                        ),
-                                  onPressed: () {
+                          return FocusedMenuHolder(
+                            onPressed: (){},
+                            menuItems: [
+                              //Finish task or unfinished
+                              widget.phase.allTasks[x].isDone?
+                                  //When task is finished
+                              FocusedMenuItem(
+                                      title: Text(
+                                        "Undone this task",
+                                        style: TextStyle(color: Colors.black),
+                                      ),
+                                      trailingIcon: Icon(
+                                        Icons.close_outlined,
+                                        color: Colors.black,
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          isChangeState = true;
+                                          widget.phase.changeTaskState(
+                                              widget.phase.allTasks[x]);
+                                        });
+                                      },
+                                    ):
+                                  //When task is unfinished
+                              FocusedMenuItem(
+                                title: Text("Finish this task",style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.green),),
+                                trailingIcon: Icon(Icons.check_outlined, color: Colors.green,),
+                                onPressed: (){
+                                  setState(() {
+                                    isChangeState = true;
+                                    widget.phase.changeTaskState(widget.phase.allTasks[x]);
+                                  });
+                                },
+                              ),
+                              //Delete task
+                              FocusedMenuItem(
+                                  title: Text("Delete",style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.redAccent),),
+                                  trailingIcon: Icon(Icons.delete,color: Colors.redAccent,),
+                                  onPressed: (){
                                     setState(() {
+                                      widget.phase.allTasks.remove(widget.phase.allTasks[x]);
                                       isChangeState = true;
-                                      widget.phase.changeTaskState(widget.phase.allTasks[x]);
                                     });
-                                  },
-                                )),
+                                  }
+                              ),
+                            ],
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: widget.phase.allTasks[x].isDone
+                                      ? Color(0xFF80BA8C)
+                                      : Color(0xFFD9D4FF)),
+                              margin: EdgeInsets.only(bottom: 15),
+                              padding: EdgeInsets.all(5),
+                              child: ListTile(
+                                  title: Text(
+                                    widget.phase.allTasks[x].taskName,
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w600,
+                                        decoration:
+                                            widget.phase.allTasks[x].isDone
+                                                ? TextDecoration.lineThrough
+                                                : null),
+                                  ),
+                                  trailing: IconButton(
+                                    icon: widget.phase.allTasks[x].isDone
+                                        ? Icon(
+                                            Icons.check_circle_outlined,
+                                            size: 40,
+                                            color: Color(0xFF005F29),
+                                          )
+                                        : Icon(
+                                            Icons.circle_outlined,
+                                            size: 40,
+                                            color: Color(0xFF717171),
+                                          ),
+                                    onPressed: () {
+                                      setState(() {
+                                        isChangeState = true;
+                                        widget.phase.changeTaskState(widget.phase.allTasks[x]);
+                                      });
+                                    },
+                                  )),
+                            ),
                           );
                         },
                       ),
@@ -479,6 +529,7 @@ class _PhaseDetailState extends State<PhaseDetail> {
                         ],
                       ),
                       SizedBox(height: 15,),
+                      //All worker builder
                       ListView.builder(
                         physics: NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
@@ -486,8 +537,8 @@ class _PhaseDetailState extends State<PhaseDetail> {
                         itemCount: widget.phase.allWorkers.length,
                         itemBuilder: (context, index) {
                           Worker person = widget.phase.allWorkers[index];
-                          return GestureDetector(
-                            onTap: (){
+                          return FocusedMenuHolder(
+                            onPressed: (){
                               showFlash(
                                   context: context,
                                   builder: (context, controller) {
@@ -506,8 +557,8 @@ class _PhaseDetailState extends State<PhaseDetail> {
                                           padding: const EdgeInsets.all(17.0),
                                           child: Wrap(
                                             children: [
-                                              RichText(
-                                                  text: TextSpan(children: [
+                                              SelectableText.rich(
+                                                  TextSpan(children: [
                                                     TextSpan(
                                                       text: person.name! + '\n\n',
                                                       style: TextStyle(
@@ -518,16 +569,16 @@ class _PhaseDetailState extends State<PhaseDetail> {
                                                       style: style,
                                                     ):emptyTextSpan,
                                                     jobEmpty?TextSpan(
-                                                      text: person.job! + '\n',
-                                                      style: boldStyle
+                                                        text: person.job! + '\n',
+                                                        style: boldStyle
                                                     ):emptyTextSpan,
                                                     emailEmpty?TextSpan(
                                                       text: 'Email: ',
                                                       style: style,
                                                     ):emptyTextSpan,
                                                     emailEmpty?TextSpan(
-                                                      text: person.email! + '\n',
-                                                      style: boldStyle
+                                                        text: person.email! + '\n',
+                                                        style: boldStyle
                                                     ):emptyTextSpan,
                                                     phoneEmpty?TextSpan(
                                                       text: 'Phone number: ',
@@ -543,6 +594,19 @@ class _PhaseDetailState extends State<PhaseDetail> {
                                         ));
                                   });
                             },
+                            menuItems: [
+                              //Delete worker
+                              FocusedMenuItem(
+                                  title: Text("Delete this worker",style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.redAccent),),
+                                  trailingIcon: Icon(Icons.delete,color: Colors.redAccent,),
+                                  onPressed: (){
+                                    setState(() {
+                                      widget.phase.allWorkers.remove(widget.phase.allWorkers[index]);
+                                      isChangeState = true;
+                                    });
+                                  }
+                              ),
+                            ],
                             child: Container(
                               margin: EdgeInsets.only(bottom: 15),
                               padding: EdgeInsets.all(5),
@@ -712,6 +776,7 @@ class _PhaseDetailState extends State<PhaseDetail> {
                         setState(() {
                           widget.phase.isDone=false;
                         });
+                        widget.project.checkPhasesState();
                         provider.updateProject(widget.project);
                         Navigator.pop(context);
                       },
@@ -723,8 +788,7 @@ class _PhaseDetailState extends State<PhaseDetail> {
                     Icons.cancel_outlined,
                     color: Colors.white,
                   ),
-                ):
-                HawkFabMenuItem(
+                ): HawkFabMenuItem(
                   label: 'Finish phase',
                   ontap: () {
                     CoolAlert.show(
@@ -736,6 +800,7 @@ class _PhaseDetailState extends State<PhaseDetail> {
                         setState(() {
                           widget.phase.finishPhase();
                         });
+                        widget.project.checkPhasesState();
                         provider.updateProject(widget.project);
                         Navigator.pop(context);
                       },
@@ -748,6 +813,7 @@ class _PhaseDetailState extends State<PhaseDetail> {
                     color: Colors.white,
                   ),
                 ),
+
             HawkFabMenuItem(
               label: 'Delete phase',
               ontap: () {
@@ -895,67 +961,3 @@ class _NewTaskState extends State<NewTask> {
     );
   }
 }
-
-// SpeedDial(
-// child: Icon(
-// Icons.menu,
-// color: Colors.white,
-// ),
-// backgroundColor: Colors.grey[700],
-// activeChild: Icon(
-// Icons.close,
-// color: Colors.white,
-// ),
-// activeBackgroundColor: Colors.red,
-// children: [
-// SpeedDialChild(
-// label: 'Edit',
-// backgroundColor: Colors.orange[400],
-// child: Icon(Icons.edit),
-// onTap: () {
-// setState(() {
-// isEdit=true;
-// });
-// }),
-// SpeedDialChild(
-// label: 'Delete phase',
-// backgroundColor: Colors.red[400],
-// child: Icon(Icons.delete),
-// onTap: () {
-// CoolAlert.show(
-// context: context,
-// type: CoolAlertType.confirm,
-// text: 'Are you sure for deleting this phase.',
-// confirmBtnText: 'Yes',
-// onConfirmBtnTap: (){
-// // provider.deletePhase(widget.project.uid, widget.phase);
-// widget.project.allPhases.remove(widget.phase);
-// provider.updateProject(widget.project);
-// Navigator.pop(context);
-// Navigator.pop(context);
-// },
-// cancelBtnText: 'No, cancel',
-// );
-// }),
-// SpeedDialChild(
-// label: 'Finish phase',
-// backgroundColor: Colors.green[400],
-// child: Icon(Icons.check_outlined),
-// onTap: () {
-// CoolAlert.show(
-// context: context,
-// type: CoolAlertType.confirm,
-// text: 'Are you sure for finishing this phase.',
-// confirmBtnText: 'Yes',
-// onConfirmBtnTap: (){
-// setState(() {
-// widget.phase.finishPhase();
-// });
-// provider.updateProject(widget.project);
-// Navigator.pop(context);
-// },
-// cancelBtnText: 'No, cancel',
-// );
-// }),
-// ],
-// )

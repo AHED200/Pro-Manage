@@ -43,6 +43,7 @@ class Profile extends StatelessWidget {
     return Scaffold(
       body: SingleChildScrollView(
         physics: BouncingScrollPhysics(),
+        padding: EdgeInsets.only(bottom: 65),
         child: Column(
           children: [
             SizedBox(

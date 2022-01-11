@@ -81,7 +81,7 @@ class Phase{
   }
 
   void finishPhase(){
-    this.isDone=!this.isDone;
+    this._isDone=true;
     for(var task in allTasks)
       task.isDone=true;
   }

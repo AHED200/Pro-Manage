@@ -70,7 +70,7 @@ class Project{
       'projectName': this._projectName,
       'dueDate':this._dueDate,
       'theCost':this._theCost,
-      'isDone':false,
+      'isDone':this._isDone,
       'phases':[
         for(Phase phase in this._allPhases)
           phase.toMap()
@@ -108,5 +108,22 @@ class Project{
         donePhases++;
     }
     return ((donePhases/projectLength)*100);
+  }
+
+  void finishProject(){
+    this._isDone=true;
+    for(int x=0; x<_allPhases.length; x++){
+      _allPhases[x].finishPhase();
+    }
+  }
+
+  void checkPhasesState(){
+    for(int x=0; x<_allPhases.length; x++){
+      if(!_allPhases[x].isDone){
+        this._isDone=false;
+        break;
+      }
+      this._isDone=true;
+    }
   }
 }

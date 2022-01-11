@@ -121,18 +121,24 @@ class _NewProjectState extends State<NewProject> {
                   textInputAction: TextInputAction.next,
                   controller: projectNameController,
                   keyboardType: TextInputType.name,
+                  decoration: InputDecoration(
+                    hintText: 'Project name',
+                  ),
                 ),
                 SizedBox(height: 10),
                 Text(
                   'The cost',
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+
                 ),
                 TextField(
                   textInputAction: TextInputAction.go,
                   controller: costController,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.attach_money_outlined)),
+                    prefixIcon: Icon(Icons.attach_money_outlined),
+                    hintText: 'Cost'
+                  ),
                 ),
                 SizedBox(height: 10),
                 Row(
@@ -224,7 +230,11 @@ class _NewProjectState extends State<NewProject> {
                                       });
                                     },
                                     icon: Icon(Icons.add)),
-                                Divider(color: Colors.red,),
+                                VerticalDivider(
+                                  indent: 10,
+                                  thickness: 2,
+                                  endIndent: 10,
+                                ),
                                 IconButton(
                                     onPressed: () {
                                       if (phaseFields.length>1)

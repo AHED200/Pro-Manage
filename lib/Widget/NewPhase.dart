@@ -1,11 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flash/flash.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:project_management/Helper/GlobalMethod.dart';
 import 'package:project_management/Helper/Provider.dart';
-import 'package:project_management/Helper/constant.dart';
-import 'package:project_management/Model/Phase.dart';
 import 'package:project_management/Model/Project.dart';
 import 'package:project_management/Model/Task.dart';
 import 'package:project_management/Widget/TaskField.dart';
