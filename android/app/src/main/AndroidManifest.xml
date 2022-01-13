@@ -2,7 +2,9 @@
     package="com.example.project_management">
    <application
         android:label="Pro Manage"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round">
+
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

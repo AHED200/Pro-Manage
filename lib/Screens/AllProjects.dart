@@ -152,9 +152,23 @@ class _AllProjectsState extends State<AllProjects> {
             title: Text("Delete this project",style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.redAccent),),
             trailingIcon: Icon(Icons.delete,color: Colors.redAccent,),
             onPressed: (){
-              setState(() {
-                provider.deleteProject(project);
-              });
+              CoolAlert.show(
+                context: context,
+                type: CoolAlertType.warning,
+                text: "Are you sure for delete project.",
+                title: 'Warning!',
+                confirmBtnText: 'Delete',
+                confirmBtnColor: Colors.redAccent,
+                onConfirmBtnTap: (){
+                  setState(() {
+                    provider.deleteProject(project);
+                  });
+                  Navigator.pop(context);
+                },
+                cancelBtnText: 'Cancel',
+                showCancelBtn: true,
+                onCancelBtnTap: () => Navigator.pop(context),
+              );
             }
         ),
       ],

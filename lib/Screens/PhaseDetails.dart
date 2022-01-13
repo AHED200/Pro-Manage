@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_alert/cool_alert.dart';
+import 'package:email_validator/email_validator.dart';
 import 'package:flash/flash.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +32,7 @@ class PhaseDetail extends StatefulWidget {
 class _PhaseDetailState extends State<PhaseDetail> {
   bool _thereTask = false;
   bool _thereWorkers = false;
+  final _key=GlobalKey<FormState>();
 
   //Material for edit
   late MaterialProvider provider = Provider.of<MaterialProvider>(context, listen: false);
@@ -459,12 +461,19 @@ class _PhaseDetailState extends State<PhaseDetail> {
                                             ),
                                           ),
                                           sizedBox,
-                                          TextField(
-                                            controller: workerEmailController,
-                                            keyboardType: TextInputType.emailAddress,
-                                            decoration: InputDecoration(
-                                                label: Text('Email'),
-                                                prefixIcon: Icon(Icons.email)
+                                          Form(
+                                            key: _key,
+                                            child: TextFormField(
+                                              validator: (x){
+                                                if(!EmailValidator.validate(x!))
+                                                  return 'Please enter a valid email';
+                                              },
+                                              controller: workerEmailController,
+                                              keyboardType: TextInputType.emailAddress,
+                                              decoration: InputDecoration(
+                                                  label: Text('Email'),
+                                                  prefixIcon: Icon(Icons.email)
+                                              ),
                                             ),
                                           ),
                                           sizedBox,
@@ -493,6 +502,8 @@ class _PhaseDetailState extends State<PhaseDetail> {
                                           onPressed: () async {
                                             //Insert new worker
                                             if(workerNameController.text.isNotEmpty){
+                                              if(workerEmailController.text.isNotEmpty&&!_key.currentState!.validate())
+                                                throw new Exception();
                                               Worker worker=Worker(workerNameController.text, workerPhoneNumberController.text, workerEmailController.text, workerJobController.text);
                                               setState(() {
                                                 widget.phase.allWorkers.add(worker);

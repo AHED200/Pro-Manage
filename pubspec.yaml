@@ -32,13 +32,13 @@ dependencies:
   step_progress_indicator: ^1.0.2
   intl: ^0.17.0
   flutter_animation_progress_bar: ^2.0.1
-  url_launcher: ^6.0.17
+  url_launcher: ^6.0.18
   firebase_core: ^1.11.0
   cloud_firestore: ^3.1.6
   firebase_auth: ^3.3.5
   uuid: ^3.0.5
   shimmer: ^2.0.0
-  syncfusion_flutter_datepicker: ^19.4.41
+  syncfusion_flutter_datepicker: ^19.4.42
   flash: ^2.0.3+2
   provider: ^6.0.2
   cool_alert: ^1.1.0
@@ -48,6 +48,8 @@ dependencies:
   hawk_fab_menu: ^1.1.1
   focused_menu: ^1.0.5
   draggable_home: ^1.0.2
+  in_app_review: ^2.0.4
+  email_validator: ^2.0.1
 
 dev_dependencies:
   flutter_test:

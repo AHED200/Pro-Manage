@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_alert/cool_alert.dart';
+import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash/flash.dart';
 import 'package:flutter/material.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:project_management/Helper/Provider.dart';
 import 'package:project_management/Helper/constant.dart';
 import 'package:project_management/Model/Phase.dart';
@@ -11,6 +13,7 @@ import 'package:project_management/Screens/AuthScreens/SignIn.dart';
 import 'package:project_management/main.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 
 class Profile extends StatelessWidget {
@@ -38,12 +41,12 @@ class Profile extends StatelessWidget {
         TextEditingController(text: user!.lastName);
     TextEditingController email = TextEditingController(text: user!.email);
     TextEditingController password = TextEditingController();
-    bool emailValidate = false;
+    final _key=GlobalKey<FormState>();
 
     return Scaffold(
       body: SingleChildScrollView(
         physics: BouncingScrollPhysics(),
-        padding: EdgeInsets.only(bottom: 65),
+        padding: EdgeInsets.only(bottom: 75),
         child: Column(
           children: [
             SizedBox(
@@ -291,14 +294,7 @@ class Profile extends StatelessWidget {
                                                       .text
                                                       .length >=
                                                   7) {
-                                            FirebaseAuth.instance
-                                                .signInWithEmailAndPassword(
-                                                    email: user!.email,
-                                                    password:
-                                                        _LoginValidationState
-                                                            .passwordController
-                                                            .text)
-                                                .catchError(
+                                            FirebaseAuth.instance.signInWithEmailAndPassword(email: user!.email, password: _LoginValidationState.passwordController.text).catchError(
                                                     (error, stackTrace) => {
                                                           showFlash(
                                                               context: context,
@@ -355,11 +351,8 @@ class Profile extends StatelessWidget {
                                                                 ]),
                                                             // controller: controller,
                                                             cornerRadius: 20,
-                                                            border: Border.all(
-                                                                color: Colors
-                                                                    .white54),
-                                                            builder: (context,
-                                                                state) {
+                                                            border: Border.all(color: Colors.white54),
+                                                            builder: (context, state) {
                                                               return Material(
                                                                 child: Column(
                                                                   children: [
@@ -369,42 +362,29 @@ class Profile extends StatelessWidget {
                                                                     ),
                                                                     Text(
                                                                       'Change email',
-                                                                      style:
-                                                                          titleStyle,
+                                                                      style: titleStyle,
                                                                     ),
-                                                                    SizedBox(
-                                                                        height:
-                                                                            30),
+                                                                    SizedBox(height: 30),
                                                                     Padding(
-                                                                      padding: EdgeInsets.symmetric(
-                                                                          horizontal:
-                                                                              10),
-                                                                      child:
-                                                                          TextFormField(
-                                                                        controller:
-                                                                            email,
-                                                                        textInputAction:
-                                                                            TextInputAction.done,
-                                                                        keyboardType:
-                                                                            TextInputType.emailAddress,
-                                                                        validator:
-                                                                            (x) {
-                                                                          emailValidate =
-                                                                              RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email.text);
-                                                                          if (x!
-                                                                              .isEmpty) {
-                                                                            return 'Email filed is empty.';
-                                                                          } else if (!emailValidate)
-                                                                            return 'Email is\'t validate';
-                                                                        },
-                                                                        decoration:
-                                                                            InputDecoration(
-                                                                          labelText:
-                                                                              'Email',
-                                                                          prefixIcon:
-                                                                              Icon(Icons.email),
-                                                                          floatingLabelBehavior:
-                                                                              FloatingLabelBehavior.auto,
+                                                                      padding: EdgeInsets.symmetric(horizontal: 10),
+                                                                      child: Form(
+                                                                        key: _key,
+                                                                        child: TextFormField(
+                                                                          controller: email,
+                                                                          textInputAction: TextInputAction.done,
+                                                                          keyboardType: TextInputType.emailAddress,
+                                                                          validator: (x) {
+                                                                            if(!EmailValidator.validate(x!))
+                                                                              return 'Please enter a valid email';
+                                                                            else if (x.isEmpty) {
+                                                                              return 'Email filed is empty.';
+                                                                            }
+                                                                          },
+                                                                          decoration: InputDecoration(
+                                                                            labelText: 'Email',
+                                                                            prefixIcon: Icon(Icons.email),
+                                                                            floatingLabelBehavior: FloatingLabelBehavior.auto,
+                                                                          ),
                                                                         ),
                                                                       ),
                                                                     ),
@@ -441,13 +421,9 @@ class Profile extends StatelessWidget {
                                                                         ),
                                                                         //Save changes
                                                                         GestureDetector(
-                                                                          onTap:
-                                                                              () async {
-                                                                            emailValidate =
-                                                                                RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email.text);
-                                                                            if (emailValidate) {
-                                                                              await provider.firestore.collection('users').doc(user!.uid).update({
-                                                                                'email': email.text
+                                                                          onTap: () async {
+                                                                            if (_key.currentState!.validate()) {
+                                                                              await provider.firestore.collection('users').doc(user!.uid).update({'email': email.text
                                                                               });
                                                                               await FirebaseAuth.instance.currentUser!.updateEmail(email.text);
                                                                               user!.email = email.text;
@@ -550,6 +526,7 @@ class Profile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  //Rate application
                   Padding(
                     padding:
                         const EdgeInsets.only(left: 12, top: 15, bottom: 8),
@@ -558,14 +535,62 @@ class Profile extends StatelessWidget {
                       style: titleStyle,
                     ),
                   ),
-                  Container(
-                    color: color,
-                    child: ListTile(
-                      title: Text(
-                        'Settings',
-                        style: styleSubTitle,
+                  GestureDetector(
+                    onTap: ()async{
+                      final InAppReview inAppReview = InAppReview.instance;
+                      if (await inAppReview.isAvailable()) {
+                        inAppReview.requestReview();
+                        inAppReview.openStoreListing(microsoftStoreId: 'com.pro.management',);
+                      }else{
+                        showFlash(
+                            context: context,
+                            duration: Duration(seconds: 4),
+                            builder: (context, controller) => Flash.bar(
+                                controller: controller,
+                                backgroundColor: Color(0xF0393939),
+                                borderRadius: BorderRadius.circular(10),
+                                margin: EdgeInsets.symmetric(
+                                    horizontal: 15, vertical: 40),
+                                forwardAnimationCurve: Curves.easeOutBack,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child:
+                                      Text('You already rating the app. Thank you.',
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                          )),
+                                )));
+                      }
+                    },
+                    child: Container(
+                      color: color,
+                      child: ListTile(
+                        title: Text(
+                          'Rate application',
+                          style: styleSubTitle,
+                        ),
+                        leading: Icon(Icons.star_border_outlined),
                       ),
-                      leading: Icon(Icons.settings),
+                    ),
+                  ),
+                  Divider(
+                    color: Colors.black,
+                    height: 0,
+                  ),
+                  //Send Assumption or Claim
+                  GestureDetector(
+                    onTap: ()async{
+                      launch('mailto:AhmedDeve@hotmail.com');
+                    },
+                    child: Container(
+                      color: color,
+                      child: ListTile(
+                        title: Text(
+                          'Contact us',
+                          style: styleSubTitle,
+                        ),
+                        leading: Icon(Icons.mail_outlined),
+                      ),
                     ),
                   ),
                   Divider(
@@ -596,8 +621,7 @@ class Profile extends StatelessWidget {
                                       if (_LoginValidationState.passwordController.text.isNotEmpty && _LoginValidationState.passwordController.text.length >= 7) {
                                         FirebaseAuth.instance.signInWithEmailAndPassword(
                                             email: user!.email,
-                                            password:
-                                            _LoginValidationState.passwordController.text)
+                                            password: _LoginValidationState.passwordController.text)
                                             .catchError(
                                                 (error, stackTrace) => {
                                               showFlash(
@@ -702,8 +726,7 @@ class Profile extends StatelessWidget {
                                                                   children: [
                                                                     //Cancel changes
                                                                     GestureDetector(
-                                                                      onTap: () =>
-                                                                          Navigator.pop(context),
+                                                                      onTap: () => Navigator.pop(context),
                                                                       child:
                                                                       Container(
                                                                         padding:
@@ -751,9 +774,7 @@ class Profile extends StatelessWidget {
                                                                     ),
                                                                   ],
                                                                 ),
-                                                                SizedBox(
-                                                                    height:
-                                                                    10)
+                                                                SizedBox(height: 10)
                                                               ],
                                                             ),
                                                           );
@@ -761,8 +782,7 @@ class Profile extends StatelessWidget {
                                           }
                                         });
                                       } else {
-                                        throw new Exception(
-                                            'Password filed is empty');
+                                        throw new Exception('Password filed is empty');
                                       }
                                     } catch (error) {
                                       showFlash(
@@ -872,21 +892,11 @@ class Profile extends StatelessWidget {
                                       actions: [
                                         TextButton(
                                             onPressed: () async {
-                                              await FirebaseFirestore.instance
-                                                  .collection(
-                                                      'projectRepository')
-                                                  .doc(
-                                                      user!.projectRepositoryId)
-                                                  .delete();
-                                              await FirebaseFirestore.instance
-                                                  .collection('users')
-                                                  .doc(user!.uid)
-                                                  .delete();
-                                              await FirebaseAuth
-                                                  .instance.currentUser!
-                                                  .delete();
-                                              Navigator.pushReplacement(
-                                                  context,
+                                              await FirebaseFirestore.instance.collection(
+                                                      'projectRepository').doc(user!.projectRepositoryId).delete();
+                                              await FirebaseFirestore.instance.collection('users').doc(user!.uid).delete();
+                                              await FirebaseAuth.instance.currentUser!.delete();
+                                              Navigator.pushReplacement(context,
                                                   MaterialPageRoute(
                                                       builder: (context) =>
                                                           SignIn()));
@@ -939,7 +949,7 @@ class Profile extends StatelessWidget {
                     onCancelBtnTap: () => Navigator.pop(context));
               },
               child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 15, vertical: 50),
+                margin: EdgeInsets.symmetric(horizontal: 15, vertical: 35),
                 padding: EdgeInsets.symmetric(vertical: 10),
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
@@ -950,6 +960,18 @@ class Profile extends StatelessWidget {
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
                 ),
               ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                RichText(text: TextSpan(
+                  children: [
+                    TextSpan(text: 'Created by ', style: TextStyle(fontSize: 17, color: Colors.white60)),
+                    TextSpan(text: 'Ahmed E H ', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Colors.white60)),
+                  ]
+                )),
+                Icon(Icons.favorite_outlined, color: Colors.redAccent,)
+              ],
             )
           ],
         ),
@@ -978,8 +1000,7 @@ class Profile extends StatelessWidget {
 
           final String projectUid = Uuid().v4();
           final String dueDate = '2022-07-24';
-          Project project = Project(
-              projectUid, 'Test project', dueDate, '10000', false, phases, []);
+          Project project = Project(projectUid, 'Test project', dueDate, '10000', false, phases, []);
           String userId = FirebaseAuth.instance.currentUser!.uid;
 
           final firestore = FirebaseFirestore.instance;
@@ -1023,8 +1044,7 @@ class LoginValidation extends StatefulWidget {
 }
 
 class _LoginValidationState extends State<LoginValidation> {
-  static final TextEditingController passwordController =
-      TextEditingController();
+  static final TextEditingController passwordController = TextEditingController();
   bool _obscureText = true;
 
   @override
@@ -1104,3 +1124,16 @@ class _LoginValidationState extends State<LoginValidation> {
     ]);
   }
 }
+
+
+//Setting button
+// Container(
+//   color: color,
+//   child: ListTile(
+//     title: Text(
+//       'Settings',
+//       style: styleSubTitle,
+//     ),
+//     leading: Icon(Icons.settings),
+//   ),
+// ),

@@ -63,14 +63,11 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                   SizedBox(
-                    height: 17,
+                    height: 25,
                   ),
                   Text(
                     'Ends soon',
                     style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
-                  ),
-                  SizedBox(
-                    height: 10,
                   ),
                   ListView.builder(
                       physics: NeverScrollableScrollPhysics(),
