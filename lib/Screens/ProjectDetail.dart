@@ -2,11 +2,12 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:flash/flash.dart';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:focused_menu/focused_menu.dart';
+import 'package:focused_menu/modals.dart';
 import 'package:intl/intl.dart';
 import 'package:project_management/Helper/GlobalMethod.dart';
 import 'package:project_management/Helper/Provider.dart';
@@ -14,7 +15,6 @@ import 'package:project_management/Helper/constant.dart';
 import 'package:project_management/Model/Note.dart';
 import 'package:project_management/Model/Phase.dart';
 import 'package:project_management/Model/Project.dart';
-import 'package:project_management/Screens/MainScreen.dart';
 import 'package:project_management/Screens/PhaseDetails.dart';
 import 'package:project_management/Widget/AppBarContainer.dart';
 import 'package:project_management/Widget/NewNote.dart';
@@ -37,10 +37,8 @@ class _ProjectDetailState extends State<ProjectDetail> {
   DateFormat format = DateFormat('yyyy-MM-dd');
   String? newDueDate;
   bool edit = false;
-  late TextEditingController projectNameController =
-      TextEditingController(text: widget.project.projectName);
-  late TextEditingController costController =
-      TextEditingController(text: widget.project.theCost);
+  late TextEditingController projectNameController = TextEditingController(text: widget.project.projectName);
+  late TextEditingController costController = TextEditingController(text: widget.project.theCost);
 
   @override
   Widget build(BuildContext context) {
@@ -294,42 +292,99 @@ class _ProjectDetailState extends State<ProjectDetail> {
                         scrollDirection: Axis.horizontal,
                         itemCount: project.allPhases.length,
                         itemBuilder: (context, index) {
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => PhaseDetail(
-                                          project.allPhases[index], project)));
-                            },
-                            child: Container(
-                                padding: EdgeInsets.all(8),
-                                margin: EdgeInsets.all(8),
-                                width: 180,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  color: getPhaseStateColor(
-                                      project.allPhases[index]),
-                                ),
-                                child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      project.allPhases[index].phaseName,
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                    Padding(
-                                      padding:
-                                          const EdgeInsets.only(bottom: 8.0),
-                                      child: getStateIcon(
-                                          project.allPhases[index]),
-                                    )
-                                  ],
-                                )),
+                          return FocusedMenuHolder(
+                            onPressed: (){},
+                            menuItems: [
+                              //Change phase index
+                              FocusedMenuItem(
+                                  title: Text("Change phase index",style: TextStyle(color: Colors.black),),
+                                  trailingIcon: Icon(Icons.list_outlined,color: Colors.black,),
+                                  onPressed: (){
+                                    ChangePhaseIndex.phaseIndex=index+1;
+                                    showDialog(context: context, barrierDismissible: false, builder: (c)=>AlertDialog(
+                                      title: Text('Change phase index',style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w700
+                                      ),),
+                                      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                                      content: ChangePhaseIndex(project.allPhases.length),
+                                      actions: [
+                                        TextButton(onPressed: (){Navigator.pop(context);}, child: Text('Cancel')),
+                                        TextButton(onPressed: (){
+                                          setState(() {
+                                            final phase=project.allPhases[index];
+                                            project.allPhases.remove(phase);
+                                            project.allPhases.insert(ChangePhaseIndex.phaseIndex-1, phase);
+                                          });
+                                          provider.updateProject(project);
+                                          Navigator.pop(context);
+                                        }, child: Text('Save')),
+                                      ],
+                                    ));
+                                  },
+                              ),
+                              //Delete phase
+                              FocusedMenuItem(
+                                  title: Text("Delete this phase",style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.redAccent),),
+                                  trailingIcon: Icon(Icons.delete,color: Colors.redAccent,),
+                                  onPressed: (){
+                                    CoolAlert.show(
+                                      context: context,
+                                      type: CoolAlertType.warning,
+                                      text: "Are you sure for delete this phase.",
+                                      title: 'Warning!',
+                                      confirmBtnText: 'Delete',
+                                      confirmBtnColor: Colors.redAccent,
+                                      onConfirmBtnTap: (){
+                                        setState(() {
+                                          widget.project.allPhases.remove(project.allPhases[index]);
+                                          provider.updateProject(project);
+                                        });
+                                        Navigator.pop(context);
+                                      },
+                                      cancelBtnText: 'Cancel',
+                                      showCancelBtn: true,
+                                      onCancelBtnTap: () => Navigator.pop(context),
+                                    );
+                                  }
+                              ),
+                            ],
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => PhaseDetail(project.allPhases[index], project)));
+                              },
+                              child: Container(
+                                  padding: EdgeInsets.all(8),
+                                  margin: EdgeInsets.all(8),
+                                  width: 180,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    color: getPhaseStateColor(
+                                        project.allPhases[index]),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        project.allPhases[index].phaseName,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 8.0),
+                                        child: getStateIcon(
+                                            project.allPhases[index]),
+                                      )
+                                    ],
+                                  )),
+                            ),
                           );
                         },
                       ),
@@ -569,5 +624,91 @@ class _ProjectDetailState extends State<ProjectDetail> {
       case 'lightGreenAccent':
         return Colors.lightGreen;
     }
+  }
+}
+
+
+class ChangePhaseIndex extends StatefulWidget {
+
+  static late int phaseIndex;
+  late int maxProjectIndex;
+  ChangePhaseIndex(this.maxProjectIndex);
+
+  @override
+  _ChangePhaseIndex createState() {
+    return _ChangePhaseIndex();
+  }
+}
+
+class _ChangePhaseIndex extends State<ChangePhaseIndex>{
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 100,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+
+        children: [
+          Text(
+            'The index',
+            style: TextStyle(
+              fontSize: 20,
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(top: 8),
+            height: 50,
+            width: 160,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(50),
+                color: Colors.white30
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                IconButton(
+                    onPressed: () {
+                      if (ChangePhaseIndex.phaseIndex<widget.maxProjectIndex) {
+                        setState(() {
+                          ChangePhaseIndex.phaseIndex++;
+                        });
+                      }
+                    },
+                    icon: Icon(Icons.add)),
+                VerticalDivider(
+                  indent: 10,
+                  thickness: 2,
+                  endIndent: 10,
+                ),
+                SizedBox(width: 8,),
+
+                Text(ChangePhaseIndex.phaseIndex.toString()),
+
+                SizedBox(width: 8,),
+                VerticalDivider(
+                  indent: 10,
+                  thickness: 2,
+                  endIndent: 10,
+                ),
+                IconButton(
+                    onPressed: (){
+                      if (ChangePhaseIndex.phaseIndex>1) {
+                        setState(() {
+                          ChangePhaseIndex.phaseIndex--;
+                        });
+                      }
+                    }, icon: Icon(Icons.remove_outlined))
+              ],
+            ),
+          )
+        ],
+      ),
+    );
   }
 }
