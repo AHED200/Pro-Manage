@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -7,11 +9,62 @@ import 'package:project_management/Screens/AuthScreens/SignIn.dart';
 import 'package:project_management/Screens/MainScreen.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:stack_appodeal_flutter/stack_appodeal_flutter.dart';
 
 UserModel? user;
+bool bannerIsReady=false;
+bool bannerIsShown=false;
+bool intersIsReady=false;
+bool intersIsShown=false;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  ConsentManager.requestConsentInfoUpdate("0810e48f6f32ed11c2b84ff7adda432143d676a63cb6aceb");
+
+  ConsentManager.setConsentInfoUpdateListener(
+          (onConsentInfoUpdated, consent) async {
+        var consentStatus = await ConsentManager.getConsentStatus();
+        var shouldShow = await ConsentManager.shouldShowConsentDialog();
+        ConsentManager.loadConsentForm();
+        var isLoaded = await ConsentManager.consentFormIsLoaded();
+        ConsentManager.showAsDialogConsentForm();
+        ConsentManager.showAsActivityConsentForm();
+      },
+          (onFailedToUpdateConsentInfo, error) => {}
+  );
+
+  Status consentStatus = await ConsentManager.getConsentStatus();
+  bool hasConsent = consentStatus == Status.PERSONALIZED ||
+      consentStatus == Status.PARTLY_PERSONALIZED;
+
+  //For enable test mode
+  Appodeal.setTesting(false);
+  Appodeal.setLogLevel(Appodeal.LogLevelVerbose);
+  Appodeal.initialize("0810e48f6f32ed11c2b84ff7adda432143d676a63cb6aceb", [Appodeal.INTERSTITIAL, Appodeal.BANNER], hasConsent);
+
+  Appodeal.setBannerCallbacks(
+          (onBannerLoaded, isPrecache) => {bannerIsReady=true},
+          (onBannerFailedToLoad) => {},
+          (onBannerShown) => {bannerIsShown=true},
+          (onBannerShowFailed) => {bannerIsReady=false},
+          (onBannerClicked) => {},
+          (onBannerExpired) => {});
+
+  Appodeal.setInterstitialCallbacks(
+          (onInterstitialLoaded, isPrecache) => {intersIsReady=true},
+          (onInterstitialFailedToLoad) => {},
+          (onInterstitialShown) => {},
+          (onInterstitialShowFailed) => {intersIsReady=false},
+          (onInterstitialClicked) => {},
+          (onInterstitialClosed) => {
+            intersIsShown = true,
+            intersIsReady = false,
+            Timer(Duration(minutes: 1, seconds: 30), (){
+              intersIsReady = true;
+            }),
+          },
+          (onInterstitialExpired) => {});
 
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider<MaterialProvider>(

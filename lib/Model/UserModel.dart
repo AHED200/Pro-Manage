@@ -11,14 +11,16 @@ class UserModel{
   late List<dynamic> _projectsId;
   late int _projectsCount;
   late int _finishedProjects;
+  late bool _showAd;
 
-  UserModel(this._username, this._firstName, this._lastName, this._email, this._createdAt, this._projectsCount, this._finishedProjects);
+  UserModel(this._username, this._firstName, this._lastName, this._email, this._createdAt, this._projectsCount, this._finishedProjects, this._showAd);
   UserModel.fromSnapshot(DocumentSnapshot snapshot, String uid){
     this._uid=uid;
     this._firstName=snapshot.get('firstName');
     this._lastName=snapshot.get('lastName');
     this._username=snapshot.get('username');
     this._email=snapshot.get('email');
+    this._showAd=snapshot.get('showAd');
     Timestamp timestamp=snapshot.get('createdAt');
     DateTime date = timestamp.toDate();
     this._createdAt='${date.year}-${date.month}-${date.day}';
@@ -84,5 +86,11 @@ class UserModel{
 
   set projectsId(List<dynamic> value) {
     _projectsId = value;
+  }
+
+  bool get showAd => _showAd;
+
+  set showAd(bool value) {
+    _showAd = value;
   }
 }

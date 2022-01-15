@@ -6,8 +6,7 @@ class TrackContainer extends StatelessWidget {
   final Color color;
   final IconData icon;
 
-  TrackContainer(
-      {required this.text, required this.count, required this.color, required this.icon});
+  TrackContainer({required this.text, required this.count, required this.color, required this.icon});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +21,7 @@ class TrackContainer extends StatelessWidget {
         children: [
           Text(
             text,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            style: TextStyle(fontSize: 14.2, fontWeight: FontWeight.w600),
           ),
           SizedBox(
             height: 15,

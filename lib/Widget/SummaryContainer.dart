@@ -3,7 +3,10 @@ import 'package:project_management/Helper/GlobalMethod.dart';
 import 'package:project_management/Model/Project.dart';
 import 'package:project_management/Screens/ProjectDetail.dart';
 import 'package:project_management/Widget/TrackContainer.dart';
+import 'package:stack_appodeal_flutter/stack_appodeal_flutter.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
+
+import '../main.dart';
 
 class SummaryContainer extends StatelessWidget {
   final Size size;
@@ -32,7 +35,10 @@ class SummaryContainer extends StatelessWidget {
 
     return GestureDetector(
       onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>ProjectDetail(project: project)));
+        if (intersIsReady&&user!.showAd)
+          Appodeal.show(Appodeal.INTERSTITIAL);
+        else
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>ProjectDetail(project: project)));
       },
       child: Container(
         width: size.width-20,
@@ -120,7 +126,7 @@ class SummaryContainer extends StatelessWidget {
                     width: 13,
                   ),
                   TrackContainer(
-                    text: 'Not begging',
+                    text: 'Not beginning',
                     count: notBegging(),
                     color: Color(0xFF8E8E8E),
                     icon: Icons.hourglass_disabled_outlined,

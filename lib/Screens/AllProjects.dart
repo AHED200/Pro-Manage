@@ -10,6 +10,9 @@ import 'package:project_management/Screens/NewProject.dart';
 import 'package:project_management/Screens/ProjectDetail.dart';
 import 'package:project_management/Widget/AppBarContainer.dart';
 import 'package:provider/provider.dart';
+import 'package:stack_appodeal_flutter/stack_appodeal_flutter.dart';
+
+import '../main.dart';
 
 class AllProjects extends StatefulWidget {
   @override
@@ -173,10 +176,10 @@ class _AllProjectsState extends State<AllProjects> {
         ),
       ],
       onPressed: (){
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ProjectDetail(project: project)));
+        if (intersIsReady&&user!.showAd)
+          Appodeal.show(Appodeal.INTERSTITIAL);
+        else
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>ProjectDetail(project: project)));
       },
       child: Container(
         padding: EdgeInsets.all(17),

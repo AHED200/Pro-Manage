@@ -50,6 +50,8 @@ dependencies:
   draggable_home: ^1.0.2
   in_app_review: ^2.0.4
   email_validator: ^2.0.1
+  stack_appodeal_flutter: ^1.0.5
+
 
 dev_dependencies:
   flutter_test:

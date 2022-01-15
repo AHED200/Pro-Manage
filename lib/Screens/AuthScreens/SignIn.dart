@@ -373,8 +373,6 @@ class _SignInState extends State<SignIn> {
       }
     } on FirebaseAuthException catch (error) {
       thereError=true;
-      print('error.code *********************** '+error.code);
-      print('error.message *********************** '+error.message.toString());
       switch (error.code) {
         case "wrong-password":
           errorMessage = "Your password is wrong.";

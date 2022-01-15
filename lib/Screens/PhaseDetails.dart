@@ -275,10 +275,9 @@ class _PhaseDetailState extends State<PhaseDetail> {
                                                     thereIsNewTask=true;
                                                   }
                                                 }
-                                                
                                                 if(thereIsNewTask) 
                                                   provider.updateProject(widget.project);
-                                                
+
                                                 Navigator.pop(context);
                                               },
                                               child: Text(

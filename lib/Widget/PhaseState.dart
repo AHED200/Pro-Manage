@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:project_management/Model/Project.dart';
 import 'package:project_management/Screens/PhaseDetails.dart';
+import 'package:stack_appodeal_flutter/stack_appodeal_flutter.dart';
+
+import '../main.dart';
 
 class PhaseState extends StatefulWidget {
   final Project project;
@@ -31,7 +34,10 @@ class _PhaseStateState extends State<PhaseState> {
         int x=index+1;
         return GestureDetector(
           onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (builder)=>PhaseDetail(widget.project.allPhases[index], widget.project)));
+            if (intersIsReady&&user!.showAd)
+              Appodeal.show(Appodeal.INTERSTITIAL);
+            else
+              Navigator.push(context, MaterialPageRoute(builder: (builder)=>PhaseDetail(widget.project.allPhases[index], widget.project)));
           },
           child: Container(
             margin: const EdgeInsets.all(8.0),

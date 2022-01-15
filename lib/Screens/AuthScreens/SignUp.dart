@@ -294,7 +294,6 @@ class _SignUpState extends State<SignUp> {
       setState(() {
         pageLoading = false;
       });
-      print('Error in Sign up screen is:' + error.toString());
     }
   }
 }
