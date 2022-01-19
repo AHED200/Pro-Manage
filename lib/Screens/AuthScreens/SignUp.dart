@@ -277,6 +277,7 @@ class _SignUpState extends State<SignUp> {
           'lastName': lastNameController.text,
           'email': emailController.text,
           'createdAt': Timestamp.now(),
+          'showAd': true,
           'projectRepositoryId': projectRepository,
           'projectsId':[],
         });
