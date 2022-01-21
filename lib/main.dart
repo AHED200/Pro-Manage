@@ -12,8 +12,8 @@ import 'package:shimmer/shimmer.dart';
 import 'package:stack_appodeal_flutter/stack_appodeal_flutter.dart';
 
 UserModel? user;
-bool bannerIsReady=false;
-bool bannerIsShown=false;
+// bool bannerIsReady=false;
+// bool bannerIsShown=false;
 bool intersIsReady=false;
 bool intersIsShown=false;
 
@@ -43,13 +43,13 @@ void main() async {
   Appodeal.setLogLevel(Appodeal.LogLevelVerbose);
   Appodeal.initialize("0810e48f6f32ed11c2b84ff7adda432143d676a63cb6aceb", [Appodeal.INTERSTITIAL], hasConsent);
 
-  Appodeal.setBannerCallbacks(
-          (onBannerLoaded, isPrecache) => {bannerIsReady=true},
-          (onBannerFailedToLoad) => {},
-          (onBannerShown) => {bannerIsShown=true},
-          (onBannerShowFailed) => {bannerIsReady=false},
-          (onBannerClicked) => {},
-          (onBannerExpired) => {});
+  // Appodeal.setBannerCallbacks(
+  //         (onBannerLoaded, isPrecache) => {bannerIsReady=true},
+  //         (onBannerFailedToLoad) => {},
+  //         (onBannerShown) => {bannerIsShown=true},
+  //         (onBannerShowFailed) => {bannerIsReady=false},
+  //         (onBannerClicked) => {},
+  //         (onBannerExpired) => {});
 
   Appodeal.setInterstitialCallbacks(
           (onInterstitialLoaded, isPrecache) => {intersIsReady=true},
