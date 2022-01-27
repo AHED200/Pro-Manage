@@ -47,5 +47,4 @@ app.*.map.json
 **/android/key.properties
 **/android/app/upload-keystore-Pro_Manage.jks
 **/android/app/google-services.json
-/lib/private.dart
 lib/private.dart

@@ -15,25 +15,23 @@ import 'package:stack_appodeal_flutter/stack_appodeal_flutter.dart';
 UserModel? user;
 // bool bannerIsReady=false;
 // bool bannerIsShown=false;
-bool intersIsReady=false;
-bool intersIsShown=false;
+bool intersIsReady = false;
+bool intersIsShown = false;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  ConsentManager.requestConsentInfoUpdate("0810e48f6f32ed11c2b84ff7adda432143d676a63cb6aceb");
+  ConsentManager.requestConsentInfoUpdate(adKey);
 
   ConsentManager.setConsentInfoUpdateListener(
-          (onConsentInfoUpdated, consent) async {
-        var consentStatus = await ConsentManager.getConsentStatus();
-        var shouldShow = await ConsentManager.shouldShowConsentDialog();
-        ConsentManager.loadConsentForm();
-        var isLoaded = await ConsentManager.consentFormIsLoaded();
-        ConsentManager.showAsDialogConsentForm();
-        ConsentManager.showAsActivityConsentForm();
-      },
-          (onFailedToUpdateConsentInfo, error) => {}
-  );
+      (onConsentInfoUpdated, consent) async {
+    var consentStatus = await ConsentManager.getConsentStatus();
+    var shouldShow = await ConsentManager.shouldShowConsentDialog();
+    ConsentManager.loadConsentForm();
+    var isLoaded = await ConsentManager.consentFormIsLoaded();
+    ConsentManager.showAsDialogConsentForm();
+    ConsentManager.showAsActivityConsentForm();
+  }, (onFailedToUpdateConsentInfo, error) => {});
 
   Status consentStatus = await ConsentManager.getConsentStatus();
   bool hasConsent = consentStatus == Status.PERSONALIZED ||
@@ -54,19 +52,19 @@ void main() async {
   //         (onBannerExpired) => {});
 
   Appodeal.setInterstitialCallbacks(
-          (onInterstitialLoaded, isPrecache) => {intersIsReady=true},
-          (onInterstitialFailedToLoad) => {},
-          (onInterstitialShown) => {},
-          (onInterstitialShowFailed) => {intersIsReady=false},
-          (onInterstitialClicked) => {},
-          (onInterstitialClosed) => {
+      (onInterstitialLoaded, isPrecache) => {intersIsReady = true},
+      (onInterstitialFailedToLoad) => {},
+      (onInterstitialShown) => {},
+      (onInterstitialShowFailed) => {intersIsReady = false},
+      (onInterstitialClicked) => {},
+      (onInterstitialClosed) => {
             intersIsShown = true,
             intersIsReady = false,
-            Timer(Duration(seconds: 55), (){
+            Timer(Duration(seconds: 55), () {
               intersIsReady = true;
             }),
           },
-          (onInterstitialExpired) => {});
+      (onInterstitialExpired) => {});
 
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider<MaterialProvider>(
@@ -76,10 +74,9 @@ void main() async {
 }
 
 class AppState extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder (
+    return FutureBuilder(
       future: Firebase.initializeApp(),
       builder: (c, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
@@ -111,8 +108,7 @@ class AppState extends StatelessWidget {
               ) {
                 if (snapshot.data == null) {
                   return SignIn();
-                } else if(snapshot.data!=null)
-                  return MainScreen();
+                } else if (snapshot.data != null) return MainScreen();
                 return waitingScreen();
               },
             ),
