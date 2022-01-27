@@ -7,6 +7,7 @@ import 'package:project_management/Helper/Provider.dart';
 import 'package:project_management/Model/UserModel.dart';
 import 'package:project_management/Screens/AuthScreens/SignIn.dart';
 import 'package:project_management/Screens/MainScreen.dart';
+import 'package:project_management/private.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:stack_appodeal_flutter/stack_appodeal_flutter.dart';
@@ -40,8 +41,9 @@ void main() async {
 
   //For enable test mode
   Appodeal.setTesting(false);
+  Appodeal.disableNetwork("admob");
   Appodeal.setLogLevel(Appodeal.LogLevelVerbose);
-  Appodeal.initialize("0810e48f6f32ed11c2b84ff7adda432143d676a63cb6aceb", [Appodeal.INTERSTITIAL], hasConsent);
+  Appodeal.initialize(addKey, [Appodeal.INTERSTITIAL], hasConsent);
 
   // Appodeal.setBannerCallbacks(
   //         (onBannerLoaded, isPrecache) => {bannerIsReady=true},
@@ -60,7 +62,7 @@ void main() async {
           (onInterstitialClosed) => {
             intersIsShown = true,
             intersIsReady = false,
-            Timer(Duration(minutes: 1, seconds: 30), (){
+            Timer(Duration(seconds: 55), (){
               intersIsReady = true;
             }),
           },
