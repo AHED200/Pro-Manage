@@ -43,7 +43,7 @@ void main() async {
   Appodeal.setTesting(false);
   Appodeal.disableNetwork("admob");
   Appodeal.setLogLevel(Appodeal.LogLevelVerbose);
-  Appodeal.initialize(addKey, [Appodeal.INTERSTITIAL], hasConsent);
+  Appodeal.initialize(adKey, [Appodeal.INTERSTITIAL], hasConsent);
 
   // Appodeal.setBannerCallbacks(
   //         (onBannerLoaded, isPrecache) => {bannerIsReady=true},
