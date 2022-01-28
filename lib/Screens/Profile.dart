@@ -6,15 +6,13 @@ import 'package:flash/flash.dart';
 import 'package:flutter/material.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:project_management/Helper/Provider.dart';
-import 'package:project_management/Helper/constant.dart';
-import 'package:project_management/Model/Phase.dart';
+import 'package:project_management/Helper/Constant.dart';
 import 'package:project_management/Model/Project.dart';
 import 'package:project_management/Screens/AuthScreens/SignIn.dart';
 import 'package:project_management/main.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:uuid/uuid.dart';
 
 class Profile extends StatelessWidget {
   final TextStyle styleTitle =

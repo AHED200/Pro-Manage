@@ -3,7 +3,7 @@ import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:project_management/Helper/constant.dart';
+import 'package:project_management/Helper/Constant.dart';
 import 'package:project_management/Model/UserModel.dart';
 import 'package:project_management/Screens/AuthScreens/SignIn.dart';
 import 'package:project_management/Screens/MainScreen.dart';
@@ -227,30 +227,33 @@ class _SignUpState extends State<SignUp> {
                             )),
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () => Navigator.pushReplacement(
-                          context, MaterialPageRoute(builder: (context) => SignIn())),
-                      child: Container(
-                        width: size.width - 11,
-                        padding: EdgeInsets.symmetric(vertical: 12),
-                        decoration: BoxDecoration(
-                          color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(9),
-                          border: Border.all(color: Constant.purple, width: 1),
-                        ),
-                        child: Text(
-                          'Log in',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
-              )
+              ),
+
+              //Sign in
+              Row(
+                children: [
+                  Text(
+                    " I have already an account",
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 18,
+                    ),
+                  ),
+                  TextButton(
+                      onPressed: ()=> Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignIn())),
+                      child: Text(
+                        "Login.",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 18,
+                        ),
+                      )
+                  )
+                ],
+              ),
             ],
           ),
         ),

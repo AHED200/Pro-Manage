@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:email_validator/email_validator.dart';
@@ -5,7 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash/flash.dart';
 import 'package:flutter/material.dart';
 import 'package:project_management/Helper/Provider.dart';
-import 'package:project_management/Helper/constant.dart';
+import 'package:project_management/Helper/Constant.dart';
 import 'package:project_management/Model/UserModel.dart';
 import 'package:project_management/Screens/AuthScreens/SignUp.dart';
 import 'package:project_management/main.dart';
@@ -96,7 +98,7 @@ class _SignInState extends State<SignIn> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Log in',
+                      'Sign in',
                       style: TextStyle(fontSize: 23, fontWeight: FontWeight.w700),
                     ),
                     SizedBox(
@@ -183,7 +185,7 @@ class _SignInState extends State<SignIn> {
                             ]),
                         child: !pageLoading?
                         Text(
-                          'Log in',
+                          'Sign in',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 20,
@@ -196,30 +198,34 @@ class _SignInState extends State<SignIn> {
                             )),
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () => Navigator.pushReplacement(
-                          context, MaterialPageRoute(builder: (context) => SignUp())),
-                      child: Container(
-                        width: size.width - 10,
-                        padding: EdgeInsets.symmetric(vertical: 12),
-                        decoration: BoxDecoration(
-                          color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(9),
-                          border: Border.all(color: Constant.purple, width: 1),
-                        ),
-                        child: Text(
-                          'Create account',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),
+
+              //Login
+              Row(
+                children: [
+                  Text(
+                    " Don\'t have account",
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 18,
+                    ),
+                  ),
+                  TextButton(
+                      onPressed: ()=> Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignUp())),
+                      child: Text(
+                        "Register.",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 18,
+                        ),
+                      )
+                  )
+                ],
+              ),
+
               //Forgot password text button
               TextButton(
                 child: Text(

@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:project_management/Model/Note.dart';
 import 'package:project_management/Model/Phase.dart';
 
