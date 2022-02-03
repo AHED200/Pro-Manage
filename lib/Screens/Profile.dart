@@ -538,7 +538,6 @@ class Profile extends StatelessWidget {
                       final InAppReview inAppReview = InAppReview.instance;
                       if (await inAppReview.isAvailable()) {
                         inAppReview.requestReview();
-                        inAppReview.openStoreListing(microsoftStoreId: 'com.pro.management',);
                       }else{
                         showFlash(
                             context: context,
