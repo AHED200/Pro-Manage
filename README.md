@@ -1,16 +1,21 @@
-# project_management
+# Pro Manage
 
-A new Flutter project.
+Using this application you can manage and track your projects easier. All information stored in Firebase backend
 
-## Getting Started
+## Technologies used
 
-This project is a starting point for a Flutter application.
+![Dart](https://img.shields.io/badge/dart-%230175C2.svg?style=for-the-badge&logo=dart&logoColor=white)
+![Flutter](https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white)
 
-A few resources to get you started if this is your first Flutter project:
+![Firebase](https://img.shields.io/badge/Firebase-039BE5?style=for-the-badge&logo=Firebase&logoColor=white)
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+![Adobe XD](https://img.shields.io/badge/Adobe%20XD-470137?style=for-the-badge&logo=Adobe%20XD&logoColor=#FF61F6)
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Screenshots
+
+![App Screenshot](./screenshots/Screenshot_20220113-231821.png)
+![App Screenshot](./screenshots/Screenshot_20220113-224913.png)
+![App Screenshot](./screenshots/Screenshot_20220113-221251.png)
+![App Screenshot](./screenshots/Screenshot_20220113-221536.png)
+![App Screenshot](./screenshots/Screenshot_20220113-221718.png)
+![App Screenshot](./screenshots/Screenshot_20220113-221724.png)
