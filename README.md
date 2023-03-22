@@ -3,7 +3,7 @@ Using this application you can manage and track your projects easier. All inform
 
 
 ## Technologies used
-![Dart](https://img.shields.io/badge/dart-%230175C2.svg?style=logo&logo=dart&logoColor=white)
+![Dart](https://img.shields.io/badge/Dart-%230175C2.svg?style=logo&logo=dart&logoColor=white)
 ![Flutter](https://img.shields.io/badge/Flutter-%2302569B.svg?style=logo&logo=Flutter&logoColor=white)
 
 ![Firebase](https://img.shields.io/badge/Firebase-039BE5?style=logo&logo=Firebase&logoColor=white)
